@@ -1,0 +1,269 @@
+* { 
+    margin: 0;
+    padding: 0;
+
+}
+.main{
+    width: 100%;
+    background: linear-gradient(to top, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.5) 50%), url("bank.jpeg");
+    background-position: center;
+    background-size: cover;
+    height: 109vh;
+    
+}
+.navbar{
+    width: 1200px;
+    height: 75px;
+    margin: auto;
+}
+.icon{
+    width: 200px;
+    float: left;
+    height: 70px;
+}
+.logo{
+    color: white;
+    font-size: 35px;
+    font-family: Arial; 
+    padding-left: 20px;
+    float: left;
+    padding-top: 10px;
+}
+.menu{
+    width: 400px;
+    float: left;
+    height: 70px;
+}
+ul{
+    float: left;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+ul li{
+    list-style: none;
+    margin-left: 62px;
+    margin-top: 27px;
+    font-size: 14px;
+}
+ul li a{
+    text-decoration: none;
+    color: white;
+    font-family: Arial;
+    font-weight: bold;
+    transition: 0.4s ease-in-out;
+}
+ul li a:hover{
+    color: #ff0000;
+}
+.search{
+    width: 330px;
+    float: left;
+    margin-left: 270px;
+}
+.srch{
+    font-family: 'Times New Roman';
+    width: 200px;
+    height: 40px;
+    background: transparent;
+    border: 1px solid rgb(190, 12, 12);
+    margin-top: 13px;
+    color: white;
+    border-right: none;
+    font-size: 16px;
+    float:left;
+    padding: 10px;
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+    
+
+}
+.btn{
+    width: 100px;
+    height: 40px;
+    background: rgb(190, 12, 12);
+    border:2px solid rgb(190, 12, 12);
+    margin-top: 13px;
+    color: white;
+    font-size: 15px;
+    font-family: 'Times New Roman';
+    cursor: pointer;
+    border-bottom-right-radius: 5px;
+    border-top-right-radius: 5px;
+}
+.btn:focus{
+    outline: none;
+}
+.srch:focus{
+    outline: none;
+}
+.content{
+    width: 1200px;
+    height: auto;
+    margin: auto;
+    color: white;
+    position: relative;
+    
+}
+.content .par{
+    padding-left: 20px;
+    padding-bottom: 25px;
+    font-family: Arial;
+    letter-spacing: 1.2px;
+    line-height: 30px;
+    
+}
+.content h1{
+    font-size: 50px;
+    font-family: 'Times New Roman';
+    padding-left: 20px;
+    margin-top: 9px;
+    letter-spacing: 2px;
+}
+.content .cn{
+    width: 160px;
+    height: 40px;
+    background: rgb(190, 12, 12);
+    border:none;
+    margin-bottom: 10px;
+    margin-left: 20px;
+    font-size: 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: .4s ease;
+
+    
+}
+.content .cn a{
+    text-decoration: none;
+    color: rgb(19, 17, 17);
+    transition: .3s ease;
+    font-family: 'Times New Roman';
+}
+.cn:hover{
+    background: #620ecfd8;
+}
+.content span{
+    color: rgb(190, 12, 12);
+    font-size: 60px;
+    font-family: 'Times New Roman';
+}
+
+.form{
+    width: 250px;
+    height: 380px;
+    background: linear-gradient(to top, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.5) 50%), url("bank.jpeg");
+    background: rgba(224, 8, 8, 0.911);
+    position: absolute;
+    top: -20px;
+    left: 870px;
+    border-radius: 10px;
+    padding: 25px;
+}
+.form h2{
+    width: 220px;
+    font-family: sans-serif;
+    text-align: center;
+    color: rgb(230, 8, 8);
+    font-size: 22px;
+    background-color:beige;
+    border-radius: 10px;
+    margin: 2px;
+    padding: 8px;
+
+    
+}
+
+.form input{
+    width: 240px;
+    height: 35px;
+    background: transparent;
+    border-bottom: 1px solid rgb(15, 1, 1);
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    color: white;
+    font-size: 15px;
+    letter-spacing: 1px;
+    margin-top: 30px;
+    font-family: sans-serif;
+}
+
+.form input:focus{
+    outline: none;
+}
+
+::placeholder{
+    color: white;
+    font-family: Arial;
+}
+
+.btnn{
+    width: 240px;
+    height: 40px;
+    background: rgb(190, 12, 12);
+    border:none;
+    margin-top: 30px;
+    font-size: 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    color: #fff;
+    transition: 0.4s ease;
+}
+
+.btnn:hover{
+    background: #fff;
+    color: rgb(190, 12, 12);
+}
+
+.btnn a{
+    text-decoration: none;
+    color: #000;
+    font-weight: bold;
+    transition: 0.4s ease;
+}
+
+.form .link{
+    margin-top: 20px;
+    text-align: center;
+    font-family: Arial;
+    font-size: 17px;
+    padding-top: 20px;
+}
+
+.form .link a{
+    text-decoration: none;
+    color: rgb(190, 12, 12);
+    font-weight: bold;
+    transition: 0.4s ease;
+}
+.liw{
+    padding-top: 15px;
+    padding-bottom: 10px;
+    text-align: center;
+    color: rgb(58, 9, 122);
+    font-weight: bold;
+    transition: 0.4s ease;
+}
+
+.icons a{
+    text-decoration: none;
+    color: white;
+    
+}
+
+.icons ion-icon{
+    color: white;
+    font-size: 30px;
+    padding-left: 14px;
+    padding-top: 5px;
+    transition: 0.3s ease;
+    
+
+
+}
+
+.icons ion-icon:hover{
+    color: rgb(190, 12, 12);
+}
+
