@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <title>webpage Design</title>
-        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     </head>
     <body>
 <div class="main">
@@ -33,7 +33,7 @@
 <div class="form">
     <h2>Login Here</h2>
 
-    <form method="POST" action="login.php">
+    <form method="POST" action="{{ url_for('login') }}">
         <input type="email" name="email" placeholder="Enter Email Here" required>
         <input type="password" name="password" placeholder="Enter Password Here" required>
         <button type="submit" class="btnn">Login</button>
