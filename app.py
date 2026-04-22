@@ -4,25 +4,18 @@ import os
 
 app = Flask(__name__)
 
-# --- 1. إعدادات الحماية (Security Configuration) ---
 app.secret_key = 'honeygate_secret_key_2026'
 app.permanent_session_lifetime = datetime.timedelta(minutes=10)
 
-# --- 2. وظيفة سجل الأدلة الجنائية (Digital Forensics Logger) ---
 def log_attack(path):
     log_file = "attacks_log.txt"
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     ip_address = request.remote_addr
     user_agent = request.user_agent.string
-    # محاولة جلب الكوكي المسروق إن وجد
     session_id = request.cookies.get('session', 'No Session Found')
     
     with open(log_file, "a", encoding="utf-8") as f:
         f.write(f"[{timestamp}] ⚠️ ALERT | IP: {ip_address} | Target: {path} | Stolen_SID: {session_id} | Device: {user_agent}\n")
-    
-    print(f"⚠️ [Forensics] Unauthorized access to {path} detected from {ip_address}")
-
-# --- 3. المسارات الأساسية (Routes) ---
 
 @app.route('/')
 def home():
@@ -33,7 +26,6 @@ def login():
     email = request.form.get('email')
     password = request.form.get('password')
     
-    # محاكاة قاعدة بيانات بسيطة
     if email == "admin@bank.com" and password == "123456":
         session.permanent = True
         session['user'] = email
@@ -44,13 +36,11 @@ def login():
 @app.route('/dashboard')
 def dashboard():
     if 'user' in session:
-        # استخراج Session ID لعرضه لأغراض الشرح التعليمي
         session_id = request.cookies.get('session')
         now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
         return render_template('dashboard.html', user=session['user'], sid=session_id, datetime=now)
     return redirect(url_for('home'))
 
-# --- 4. نظام المصيدة الخارجي (External Honeypot) ---
 @app.route('/admin')
 @app.route('/config')
 @app.route('/backup')
@@ -58,19 +48,17 @@ def external_honeypot():
     log_attack(request.path)
     return render_honeypot_ui()
 
-# --- 5. نظام المصيدة الداخلي (Internal Honeypot/Traps) ---
 @app.route('/transfer')
 @app.route('/cards')
 @app.route('/loans')
 @app.route('/settings')
 def internal_honeypot():
-    # هنا نصطاد الهكر الذي سرق الجلسة ويحاول الدخول لأقسام حساسة
     log_attack(request.path)
     return render_honeypot_ui()
 
 def render_honeypot_ui():
     return """
-    <body style="background:#0d0d0d; color:#00ff41; font-family: 'Courier New', monospace; padding:50px;">
+    <body style="background:#0d0d0d; color:#00ff41; font-family: 'Courier New', monospace; padding:50px; direction:ltr; text-align:left;">
         <h2 style="color: #ff3e3e;">[!] CRITICAL SYSTEM ACCESS DETECTED</h2>
         <p>--------------------------------------------------</p>
         <p>Target System: <b>Bank_Core_V2</b></p>
@@ -90,7 +78,5 @@ def logout():
     session.clear()
     return redirect(url_for('home'))
 
-# --- 6. التشغيل (بما يسمح بدخول الأجهزة الخارجية كـ الآيباد) ---
 if __name__ == '__main__':
-    # host='0.0.0.0' ضروري جداً لتجربة الآيباد
     app.run(debug=True, host='0.0.0.0', port=5000)

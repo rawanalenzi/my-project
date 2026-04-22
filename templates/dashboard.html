@@ -1,65 +1,87 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HoneyGate | لوحة التحكم البنكية</title>
+    <title>Nexus Bank - Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; display: flex; }
+        body { font-family: Arial, sans-serif; background: #f4f7f6; margin: 0; display: flex; }
+        .sidebar { width: 250px; background: #2c3e50; color: white; height: 100vh; padding: 20px; }
+        .sidebar h2 { color: #3498db; }
+        .sidebar a { display: block; color: white; padding: 10px; text-decoration: none; margin-bottom: 5px; border-radius: 4px; }
+        .sidebar a:hover { background: #34495e; }
+        .sidebar a.trap { color: #e74c3c; font-weight: bold; } /* الروابط المصيدة */
         
-        /* القائمة الجانبية */
-        .sidebar { width: 250px; background-color: #1a1a1a; color: white; height: 100vh; padding: 20px; position: fixed; }
-        .sidebar h2 { color: #ff4b5c; text-align: center; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        .sidebar a { display: block; color: #bbb; padding: 15px; text-decoration: none; border-radius: 5px; transition: 0.3s; margin-bottom: 5px; }
-        .sidebar a:hover { background-color: #333; color: white; }
-        .sidebar a.active { background-color: #ff4b5c; color: white; }
-
-        /* المحتوى الرئيسي */
-        .main-content { margin-right: 270px; padding: 40px; width: 100%; }
-        .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        
-        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-top: 20px; border-top: 5px solid #ff4b5c; }
-        .balance { font-size: 32px; color: #2c3e50; font-weight: bold; margin: 10px 0; }
-        
-        /* تنبيه أمني - Session ID */
-        .security-info { background: #fff3cd; border: 1px dashed #856404; padding: 15px; border-radius: 8px; margin-top: 30px; color: #856404; }
-        .session-id { font-family: monospace; background: #eee; padding: 10px; display: block; word-break: break-all; margin-top: 10px; border-radius: 5px; border: 1px solid #ccc; }
+        .main-content { flex: 1; padding: 40px; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
+        .session-info { background: #e8f4fd; border-left: 5px solid #3498db; padding: 15px; margin-top: 20px; font-family: monospace; }
+        .card-container { display: flex; gap: 20px; margin-top: 20px; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex: 1; }
+        .btn-logout { background: #e74c3c; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; }
     </style>
 </head>
 <body>
 
     <div class="sidebar">
-        <h2>HoneyGate Bank</h2>
-        <a href="/dashboard" class="active">الرئيسية</a>
-        <a href="/transfer">الحوالات 💸</a>
-        <a href="/cards">البطاقات 💳</a>
-        <a href="/loans">القروض 🏦</a>
-        <a href="/settings">الإعدادات ⚙️</a>
-        <br><br>
-        <a href="/logout" style="color: #ff4b5c; font-weight: bold;">تسجيل الخروج</a>
+        <h2>Nexus Bank</h2>
+        <p>Welcome, {{ user }}</p>
+        <hr>
+        <a href="/dashboard">Overview</a>
+        <a href="/transfer" class="trap">Money Transfer</a>
+        <a href="/cards" class="trap">My Cards</a>
+        <a href="/loans" class="trap">Apply for Loan</a>
+        <a href="/settings" class="trap">System Settings</a>
+        <hr>
+        <a href="/logout" class="btn-logout">Logout</a>
     </div>
 
     <div class="main-content">
         <div class="header">
-            <h1>أهلاً بك، {{ user }}</h1>
-            <div style="color: #7f8c8d;">آخر تسجيل دخول: {{ datetime }}</div>
+            <h1>Account Overview</h1>
+            <span>Last Login: {{ datetime }}</span>
         </div>
 
-        <div class="card">
-            <h3>إجمالي الرصيد المتاح</h3>
-            <div class="balance">12,750.00 ر.س</div>
-            <p style="color: #27ae60;">● الحساب نشط</p>
+        <div class="session-info">
+            <strong>[Security Debug Info]</strong><br>
+            Current Session ID: <span style="color: #d35400;">{{ sid }}</span><br>
+            <small>*In a real attack, this ID is what the hacker steals.</small>
         </div>
 
-        <div class="security-info">
-            <strong>⚠️ تنبيه أمني (لأغراض محاكاة الاختراق):</strong><br>
-            المتصفح يستخدم حالياً كود الجلسة (Session ID) الموضح أدناه للتعرف عليك. 
-            في حال وصول الهكر لهذا الكود، يمكنه استخدامه لـ **انتحال شخصيتك (Session Hijacking)**.
-            
-            <span class="session-id">
-                {{ sid }}
-            </span>
-            <p><small>* (هذا الكود هو ما سيقوم "الهكر" بنسخه ووضعه في المتصفح الثاني).*</small></p>
+        <div class="card-container">
+            <div class="card">
+                <h3>Total Balance</h3>
+                <h2 style="color: #27ae60;">45,250.00 SAR</h2>
+            </div>
+            <div class="card">
+                <h3>Active Credits</h3>
+                <h2>2</h2>
+            </div>
+            <div class="card">
+                <h3>Security Status</h3>
+                <h2 style="color: #2980b9;">Protected</h2>
+            </div>
+        </div>
+
+        <div style="margin-top: 30px;">
+            <h3>Recent Activity</h3>
+            <table style="width: 100%; border-collapse: collapse; background: white;">
+                <tr style="background: #f2f2f2; text-align: left;">
+                    <th style="padding: 10px;">Date</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                </tr>
+                <tr>
+                    <td style="padding: 10px;">2026-04-10</td>
+                    <td>ATM Withdrawal</td>
+                    <td style="color: red;">-500.00 SAR</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px;">2026-04-08</td>
+                    <td>Salary Deposit</td>
+                    <td style="color: green;">+15,000.00 SAR</td>
+                </tr>
+            </table>
         </div>
     </div>
 
