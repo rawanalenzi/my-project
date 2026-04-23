@@ -25,3 +25,36 @@
 [2026-04-21 00:38:45] ⚠️ ALERT | IP: 192.168.8.101 | Target: /transfer | Stolen_SID: eyJfcGVybWFuZW50Ijp0cnVlLCJ1c2VyIjoiYWRtaW5AYmFuay5jb20ifQ.aeac1w.qPs16Ddrquzv_OBLnOqtsmd06NE | Device: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36
 [2026-04-21 00:56:45] ⚠️ ALERT | IP: 192.168.8.101 | Target: /transfer | Stolen_SID: No Session Found | Device: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36
 [2026-04-21 01:07:55] ⚠️ ALERT | IP: 127.0.0.1 | Target: /settings | Stolen_SID: eyJfcGVybWFuZW50Ijp0cnVlLCJ1c2VyIjoiYWRtaW5AYmFuay5jb20ifQ.aeajtg.gXnODPKR4zFCAnppaP4N2qGQ0UM | Device: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36
+[2026-04-22 16:58:32] ⚠️ ALERT | IP: 127.0.0.1 | Target: /settings | Stolen_SID: eyJfcGVybWFuZW50Ijp0cnVlLCJ1c2VyIjoiYWRtaW5AYmFuay5jb20ifQ.aejUBA.1UQD0UX_CH06WGNlZW-vTkY7ELA | Device: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36
+[2026-04-22 16:58:49] ⚠️ ALERT | IP: 127.0.0.1 | Target: /settings | Stolen_SID: eyJfcGVybWFuZW50Ijp0cnVlLCJ1c2VyIjoiYWRtaW5AYmFuay5jb20ifQ.aejUCw.1ytKdY57ChvrnfZlP59xmpnqdfU | Device: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36
+[2026-04-22 17:00:02] ⚠️ ALERT | IP: 127.0.0.1 | Target: /transfer | Stolen_SID: eyJfcGVybWFuZW50Ijp0cnVlLCJ1c2VyIjoiYWRtaW5AYmFuay5jb20ifQ.aejUGQ.noedzHKVgx1DgyA4QPnynrSxEeM | Device: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36
+[2026-04-22 17:34:40] ⚠️ ALERT | IP: 127.0.0.1 | Target: /settings | Stolen_SID: eyJfcGVybWFuZW50Ijp0cnVlLCJ1c2VyIjoiYWRtaW5AYmFuay5jb20ifQ.aejcew.R7HTC20eq0alxQe8NHa2veYFyLE | Device: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36
+[2026-04-22 17:44:26] ⚠️ DETECTED | IP: 127.0.0.1 | Target: /settings | Reason: Repeated Suspicious Access | Device: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36
+[2026-04-22 17:44:27] ⚠️ DETECTED | IP: 127.0.0.1 | Target: /settings | Reason: Repeated Suspicious Access | Device: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36
+[2026-04-22 17:51:13] ⚠️ DETECTED | IP: 127.0.0.1 | Target: /settings | Reason: Repeated Suspicious Access | Device: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36
+[2026-04-22 17:55:11] ⚠️ DETECTED | IP: 127.0.0.1 | Target: /settings | Reason: Repeated Suspicious Access | Device: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36
+[2026-04-22 18:01:27] ⚠️ DETECTED | IP: 127.0.0.1 | Target: /settings | Reason: Repeated Suspicious Access | Device: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36
+[2026-04-22 18:01:29] ⚠️ DETECTED | IP: 127.0.0.1 | Target: /settings | Reason: Repeated Suspicious Access | Device: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36
+[2026-04-22 18:09:17] ALERT | LOW | IP: 127.0.0.1 | Target: /settings | Action: Triggered Fake 404
+[2026-04-22 18:09:20] ALERT | MEDIUM | IP: 127.0.0.1 | Target: /settings | Action: Redirected to Admin Portal
+[2026-04-22 18:09:20] ALERT | CRITICAL | IP: 127.0.0.1 | Target: /settings | Action: Deployed Interactive Terminal
+[2026-04-22 18:09:21] ALERT | CRITICAL | IP: 127.0.0.1 | Target: /settings | Action: Deployed Interactive Terminal
+[2026-04-22 18:09:22] ALERT | CRITICAL | IP: 127.0.0.1 | Target: /settings | Action: Deployed Interactive Terminal
+[2026-04-22 18:09:26] ALERT | CRITICAL | IP: 127.0.0.1 | Target: /settings | Action: Deployed Interactive Terminal
+[2026-04-22 18:10:23] ALERT | CRITICAL | IP: 127.0.0.1 | Target: /settings | Action: Deployed Interactive Terminal
+[2026-04-22 18:10:39] ALERT | CRITICAL | IP: 127.0.0.1 | Target: /settings | Action: Deployed Interactive Terminal
+[2026-04-22 18:10:41] ALERT | CRITICAL | IP: 127.0.0.1 | Target: /settings | Action: Deployed Interactive Terminal
+[2026-04-22 18:10:42] ALERT | CRITICAL | IP: 127.0.0.1 | Target: /settings | Action: Deployed Interactive Terminal
+[2026-04-22 18:10:42] ALERT | CRITICAL | IP: 127.0.0.1 | Target: /settings | Action: Deployed Interactive Terminal
+[2026-04-22 18:10:43] ALERT | CRITICAL | IP: 127.0.0.1 | Target: /settings | Action: Deployed Interactive Terminal
+[2026-04-22 18:10:43] ALERT | CRITICAL | IP: 127.0.0.1 | Target: /settings | Action: Deployed Interactive Terminal
+[2026-04-22 18:10:43] ALERT | CRITICAL | IP: 127.0.0.1 | Target: /settings | Action: Deployed Interactive Terminal
+[2026-04-22 18:10:43] ALERT | CRITICAL | IP: 127.0.0.1 | Target: /settings | Action: Deployed Interactive Terminal
+[2026-04-22 18:10:43] ALERT | CRITICAL | IP: 127.0.0.1 | Target: /settings | Action: Deployed Interactive Terminal
+[2026-04-22 18:10:43] ALERT | CRITICAL | IP: 127.0.0.1 | Target: /settings | Action: Deployed Interactive Terminal
+[2026-04-22 18:10:44] ALERT | CRITICAL | IP: 127.0.0.1 | Target: /settings | Action: Deployed Interactive Terminal
+[2026-04-22 18:10:44] ALERT | CRITICAL | IP: 127.0.0.1 | Target: /settings | Action: Deployed Interactive Terminal
+[2026-04-22 18:10:44] ALERT | CRITICAL | IP: 127.0.0.1 | Target: /settings | Action: Deployed Interactive Terminal
+[2026-04-22 18:10:44] ALERT | CRITICAL | IP: 127.0.0.1 | Target: /settings | Action: Deployed Interactive Terminal
+[2026-04-22 18:10:44] ALERT | CRITICAL | IP: 127.0.0.1 | Target: /settings | Action: Deployed Interactive Terminal
+[2026-04-22 18:12:05] ALERT | CRITICAL | IP: 127.0.0.1 | Target: /transfer | Action: Deployed Interactive Terminal
