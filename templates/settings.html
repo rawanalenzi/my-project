@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SeC Bank Settings</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dashboard-premium">
+<div class="dash-shell">
+    <aside class="dash-sidebar">
+        <div class="dash-brand">
+            <span class="dash-brand-dot"></span>
+            <h2>SeC Bank</h2>
+        </div>
+        <nav class="dash-nav">
+            <a class="dash-nav-link" href="/dashboard">Dashboard</a>
+            <a class="dash-nav-link" href="/transfer">Transfer</a>
+            <a class="dash-nav-link" href="/cards">Cards</a>
+            <a class="dash-nav-link" href="/loans">Loans</a>
+            <a class="dash-nav-link active" href="/settings">Settings</a>
+            <a class="dash-nav-link" href="/logout">Logout</a>
+        </nav>
+    </aside>
+
+    <main class="dash-main dashboard-fade">
+        <header class="dash-topbar">
+            <div>
+                <h2>Account Settings</h2>
+                <p class="dash-muted">Profile and notification preferences</p>
+            </div>
+            <div class="dash-user-pill">{{ user }}</div>
+        </header>
+
+        <section class="dash-grid dash-grid-main">
+            <article class="dash-card">
+                <h3 style="margin-bottom: 12px;">Profile</h3>
+                <div class="dash-form-grid">
+                    <div>
+                        <label class="dash-muted">Full Name</label>
+                        <input type="text" value="SeC Bank User">
+                    </div>
+                    <div>
+                        <label class="dash-muted">Email</label>
+                        <input type="email" value="{{ user }}">
+                    </div>
+                    <div>
+                        <label class="dash-muted">Mobile Number</label>
+                        <input type="text" value="+966 5X XXX XXXX">
+                    </div>
+                </div>
+                <div style="margin-top: 14px;"><button class="btn btn-primary">Save Changes</button></div>
+            </article>
+
+            <article class="dash-card">
+                <h3 style="margin-bottom: 12px;">Notifications</h3>
+                <div class="dash-activity-list">
+                    <div class="dash-activity-item">
+                        <div><p>Transaction alerts</p><span>SMS + Email</span></div>
+                        <strong>Enabled</strong>
+                    </div>
+                    <div class="dash-activity-item">
+                        <div><p>Login alerts</p><span>Security notifications</span></div>
+                        <strong>Enabled</strong>
+                    </div>
+                    <div class="dash-activity-item">
+                        <div><p>Marketing updates</p><span>Offers and campaigns</span></div>
+                        <strong>Disabled</strong>
+                    </div>
+                </div>
+            </article>
+        </section>
+    </main>
+</div>
+</body>
+</html>

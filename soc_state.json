@@ -1,0 +1,140 @@
+{
+  "saved_at": "2026-04-29 01:29:52",
+  "blocked_ips": [
+    "127.0.0.1"
+  ],
+  "behavior_profiles": {
+    "127.0.0.1": {
+      "ip": "127.0.0.1",
+      "attempt_count": 6,
+      "emails": [
+        "admin@bank.com",
+        "bank@admin.com",
+        "iugibi@gmail.com"
+      ],
+      "passwords": [
+        "123456",
+        "admin@bank.com",
+        "nbo"
+      ],
+      "risk_score": "HIGH",
+      "reason": "Credential stuffing pattern: same email with multiple passwords",
+      "blocked": true,
+      "latest_attempt": "2026-04-29 01:29:52",
+      "decoy_hits": 0
+    },
+    "192.168.8.108": {
+      "ip": "192.168.8.108",
+      "attempt_count": 2,
+      "emails": [
+        "admin@bank.com"
+      ],
+      "passwords": [
+        "123456"
+      ],
+      "risk_score": "LOW",
+      "reason": "Low-volume probing behavior",
+      "blocked": false,
+      "latest_attempt": "2026-04-26 01:52:40",
+      "decoy_hits": 0
+    }
+  },
+  "login_events": [
+    {
+      "ip": "127.0.0.1",
+      "email": "admin@bank.com",
+      "password": "admin@bank.com",
+      "status": "FAILED",
+      "timestamp": "2026-04-26 01:18:14",
+      "timestamp_text": "2026-04-26 01:18:14",
+      "decoy_hit": false,
+      "risk": "LOW",
+      "reason": "Low-volume probing behavior",
+      "blocked": false
+    },
+    {
+      "ip": "127.0.0.1",
+      "email": "admin@bank.com",
+      "password": "123456",
+      "status": "SUCCESS",
+      "timestamp": "2026-04-26 01:19:20",
+      "timestamp_text": "2026-04-26 01:19:20",
+      "decoy_hit": false,
+      "risk": "HIGH",
+      "reason": "Credential stuffing pattern: same email with multiple passwords",
+      "blocked": true
+    },
+    {
+      "ip": "192.168.8.108",
+      "email": "admin@bank.com",
+      "password": "123456",
+      "status": "SUCCESS",
+      "timestamp": "2026-04-26 01:19:41",
+      "timestamp_text": "2026-04-26 01:19:41",
+      "decoy_hit": false,
+      "risk": "LOW",
+      "reason": "Low-volume probing behavior",
+      "blocked": false
+    },
+    {
+      "ip": "192.168.8.108",
+      "email": "admin@bank.com",
+      "password": "123456",
+      "status": "SUCCESS",
+      "timestamp": "2026-04-26 01:52:40",
+      "timestamp_text": "2026-04-26 01:52:40",
+      "decoy_hit": false,
+      "risk": "LOW",
+      "reason": "Low-volume probing behavior",
+      "blocked": false
+    },
+    {
+      "ip": "127.0.0.1",
+      "email": "admin@bank.com",
+      "password": "123456",
+      "status": "BLOCKED (simulated)",
+      "timestamp": "2026-04-26 08:48:33",
+      "timestamp_text": "2026-04-26 08:48:33",
+      "decoy_hit": false,
+      "risk": "HIGH",
+      "reason": "Credential stuffing pattern: same email with multiple passwords",
+      "blocked": true
+    },
+    {
+      "ip": "127.0.0.1",
+      "email": "bank@admin.com",
+      "password": "123456",
+      "status": "BLOCKED (simulated)",
+      "timestamp": "2026-04-26 08:49:27",
+      "timestamp_text": "2026-04-26 08:49:27",
+      "decoy_hit": false,
+      "risk": "HIGH",
+      "reason": "Credential stuffing pattern: same email with multiple passwords",
+      "blocked": true
+    },
+    {
+      "ip": "127.0.0.1",
+      "email": "bank@admin.com",
+      "password": "123456",
+      "status": "BLOCKED (simulated)",
+      "timestamp": "2026-04-29 01:29:17",
+      "timestamp_text": "2026-04-29 01:29:17",
+      "decoy_hit": false,
+      "risk": "HIGH",
+      "reason": "Credential stuffing pattern: same email with multiple passwords",
+      "blocked": true
+    },
+    {
+      "ip": "127.0.0.1",
+      "email": "iugibi@gmail.com",
+      "password": "nbo",
+      "status": "BLOCKED (simulated)",
+      "timestamp": "2026-04-29 01:29:52",
+      "timestamp_text": "2026-04-29 01:29:52",
+      "decoy_hit": false,
+      "risk": "HIGH",
+      "reason": "Credential stuffing pattern: same email with multiple passwords",
+      "blocked": true
+    }
+  ]
+}

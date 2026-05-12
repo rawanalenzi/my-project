@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SeC Bank SOC Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+</head>
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <span class="brand-dot"></span>
+                <h2>SeC Bank</h2>
+            </div>
+            <p>Security Operations</p>
+            <a class="nav-link" href="/dashboard">Dashboard</a>
+            <a class="nav-link active" href="/admin">SOC Center</a>
+            <a class="nav-link" href="/logout">Logout</a>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div>
+                    <h1>Security Operations Center</h1>
+                    <p>Behavior analytics and attack intelligence</p>
+                </div>
+                <a class="btn btn-secondary" href="/dashboard">Back to banking dashboard</a>
+            </header>
+
+            <section class="grid grid-3">
+                <div class="card">
+                    <h3>Total Failed Attempts</h3>
+                    <div class="value">{{ summary.total_attempts }}</div>
+                </div>
+                <div class="card">
+                    <h3>Unique Source IPs</h3>
+                    <div class="value">{{ summary.total_ips }}</div>
+                </div>
+                <div class="card">
+                    <h3>High Risk IPs</h3>
+                    <div class="value">{{ summary.high_risk_ips }}</div>
+                </div>
+                <div class="card">
+                    <h3>Blocked IPs (Simulated)</h3>
+                    <div class="value">{{ summary.blocked_ips }}</div>
+                </div>
+                <div class="card">
+                    <h3>Decoy Hits</h3>
+                    <div class="value">{{ summary.decoy_hits }}</div>
+                </div>
+            </section>
+
+            <section class="panel">
+                <h2 style="margin-bottom: 12px;">Filters</h2>
+                <form method="GET" action="/admin">
+                    <div class="filters">
+                        <select name="ip">
+                            <option value="">All IPs</option>
+                            {% for ip in all_ips %}
+                            <option value="{{ ip }}" {% if selected_ip == ip %}selected{% endif %}>{{ ip }}</option>
+                            {% endfor %}
+                        </select>
+                        <select name="risk">
+                            <option value="">All Risks</option>
+                            <option value="LOW" {% if selected_risk == "LOW" %}selected{% endif %}>LOW</option>
+                            <option value="MEDIUM" {% if selected_risk == "MEDIUM" %}selected{% endif %}>MEDIUM</option>
+                            <option value="HIGH" {% if selected_risk == "HIGH" %}selected{% endif %}>HIGH</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" type="submit">Apply Filters</button>
+                    <a class="btn btn-secondary" href="/admin">Reset</a>
+                </form>
+            </section>
+
+            <section class="panel">
+                <h2 style="margin-bottom: 12px;">Attack Timeline (Hourly)</h2>
+                <canvas id="timelineChart" height="90"></canvas>
+            </section>
+
+            <section class="panel">
+                <h2 style="margin-bottom: 12px;">Live Attack Feed (Auto-refresh 3s)</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>IP</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Risk</th>
+                        </tr>
+                    </thead>
+                    <tbody id="liveFeedBody">
+                        <tr><td colspan="5">Waiting for activity...</td></tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="panel">
+                <h2 style="margin-bottom: 12px;">Top Attackers</h2>
+                {% if top_attackers %}
+                    {% for item in top_attackers %}
+                    <div class="attacker-card">
+                        <div class="attacker-top">
+                            <strong>{{ item.ip }}</strong>
+                            <span class="badge {% if item.risk_score == 'HIGH' %}badge-high{% elif item.risk_score == 'MEDIUM' %}badge-medium{% else %}badge-low{% endif %}">{{ item.risk_score }}</span>
+                        </div>
+                        <p class="muted">Attempts: {{ item.attempt_count }} | Decoy hits: {{ item.decoy_hits }} | Last seen: {{ item.latest_attempt }}</p>
+                        <p class="muted">{{ item.reason }}</p>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="muted">No attacker data available yet.</p>
+                {% endif %}
+            </section>
+
+            <section class="panel">
+                <h2 style="margin-bottom: 12px;">Behavior Analytics by IP</h2>
+                {% if grouped_results %}
+                    {% for item in grouped_results %}
+                        <div class="attacker-card">
+                            <div class="attacker-top">
+                                <strong>{{ item.ip }}</strong>
+                                <div>
+                                    <span class="badge {% if item.risk_score == 'HIGH' %}badge-high{% elif item.risk_score == 'MEDIUM' %}badge-medium{% else %}badge-low{% endif %}">{{ item.risk_score }}</span>
+                                    {% if item.blocked %}
+                                    <span class="badge badge-high">BLOCKED (simulated)</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <p class="muted">Total attempts: {{ item.attempt_count }} | Decoy hits: {{ item.decoy_hits }} | Last seen: {{ item.latest_attempt }}</p>
+                            <p class="muted">{{ item.reason }}</p>
+
+                            <div class="chips">
+                                {% for email in item.emails %}
+                                    <span class="chip">{{ email }}</span>
+                                {% endfor %}
+                            </div>
+                            <p class="muted">Unique emails used</p>
+
+                            <div class="chips">
+                                {% for password in item.passwords %}
+                                    <span class="chip">{{ password }}</span>
+                                {% endfor %}
+                            </div>
+                            <p class="muted">Passwords attempted</p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="muted">No matching analytics for selected filters.</p>
+                {% endif %}
+            </section>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let timelineChart = null;
+
+        async function loadTimeline() {
+            const res = await fetch('/admin/stats');
+            const data = await res.json();
+            const ctx = document.getElementById('timelineChart').getContext('2d');
+
+            if (timelineChart) {
+                timelineChart.data.labels = data.labels;
+                timelineChart.data.datasets[0].data = data.counts;
+                timelineChart.update();
+                return;
+            }
+
+            timelineChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Login attempts per hour',
+                        data: data.counts,
+                        borderColor: '#0b1f3b',
+                        backgroundColor: 'rgba(11,31,59,0.12)',
+                        tension: 0.35,
+                        fill: true
+                    }]
+                },
+                options: {
+                    plugins: { legend: { labels: { color: '#1f2937' } } },
+                    scales: {
+                        x: { ticks: { color: '#64748b' }, grid: { color: '#e6ecf3' } },
+                        y: { ticks: { color: '#64748b', precision: 0 }, grid: { color: '#e6ecf3' }, beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        async function loadLiveFeed() {
+            const res = await fetch('/admin/live');
+            const data = await res.json();
+            const tbody = document.getElementById('liveFeedBody');
+            const rows = data.items || [];
+
+            if (!rows.length) {
+                tbody.innerHTML = '<tr><td colspan="5">Waiting for activity...</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = rows.map((row) => `
+                <tr>
+                    <td>${row.timestamp}</td>
+                    <td>${row.ip}</td>
+                    <td>${row.email}</td>
+                    <td>${row.status}</td>
+                    <td>${row.risk}</td>
+                </tr>
+            `).join('');
+        }
+
+        loadTimeline();
+        loadLiveFeed();
+        setInterval(loadTimeline, 3000);
+        setInterval(loadLiveFeed, 3000);
+    </script>
+</body>
+</html>

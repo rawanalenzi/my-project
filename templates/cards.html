@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SeC Bank Cards</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dashboard-premium">
+<div class="dash-shell">
+    <aside class="dash-sidebar">
+        <div class="dash-brand">
+            <span class="dash-brand-dot"></span>
+            <h2>SeC Bank</h2>
+        </div>
+        <nav class="dash-nav">
+            <a class="dash-nav-link" href="/dashboard">Dashboard</a>
+            <a class="dash-nav-link" href="/transfer">Transfer</a>
+            <a class="dash-nav-link active" href="/cards">Cards</a>
+            <a class="dash-nav-link" href="/loans">Loans</a>
+            <a class="dash-nav-link" href="/settings">Settings</a>
+            <a class="dash-nav-link" href="/logout">Logout</a>
+        </nav>
+    </aside>
+
+    <main class="dash-main dashboard-fade">
+        <header class="dash-topbar">
+            <div>
+                <h2>Your Cards</h2>
+                <p class="dash-muted">Manage your payment cards</p>
+            </div>
+            <div class="dash-user-pill">{{ user }}</div>
+        </header>
+
+        <section class="dash-actions-grid">
+            <article class="dash-card dash-fake-bank-card">
+                <p class="dash-muted">SeC Bank Platinum</p>
+                <h3>•••• •••• •••• 9821</h3>
+                <div class="dash-meta">Valid 08/28 · CVV ***</div>
+            </article>
+            <article class="dash-card dash-fake-bank-card">
+                <p class="dash-muted">SeC Bank Rewards</p>
+                <h3>•••• •••• •••• 1140</h3>
+                <div class="dash-meta">Valid 03/29 · CVV ***</div>
+            </article>
+            <article class="dash-card dash-fake-bank-card">
+                <p class="dash-muted">SeC Bank Business</p>
+                <h3>•••• •••• •••• 4502</h3>
+                <div class="dash-meta">Valid 11/27 · CVV ***</div>
+            </article>
+            <article class="dash-card dash-fake-bank-card">
+                <p class="dash-muted">Virtual Card</p>
+                <h3>•••• •••• •••• 7733</h3>
+                <div class="dash-meta">Online use only</div>
+            </article>
+        </section>
+
+        <section class="dash-grid dash-grid-secondary">
+            <article class="dash-card">
+                <h3 style="margin-bottom: 12px;">Card Controls</h3>
+                <div class="dash-action-stack">
+                    <button class="btn btn-secondary">Freeze Card</button>
+                    <button class="btn btn-secondary">Set Spending Limit</button>
+                    <button class="btn btn-primary">Request Replacement</button>
+                </div>
+            </article>
+            <article class="dash-card">
+                <h3 style="margin-bottom: 12px;">Latest Card Activity</h3>
+                <div class="dash-activity-list">
+                    <div class="dash-activity-item">
+                        <div><p>Online Store Purchase</p><span>{{ datetime }}</span></div>
+                        <strong>-420 SAR</strong>
+                    </div>
+                    <div class="dash-activity-item">
+                        <div><p>Fuel Station</p><span>{{ datetime }}</span></div>
+                        <strong>-210 SAR</strong>
+                    </div>
+                </div>
+            </article>
+        </section>
+    </main>
+</div>
+</body>
+</html>

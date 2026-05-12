@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SeC Bank Transfer</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dashboard-premium">
+<div class="dash-shell">
+    <aside class="dash-sidebar">
+        <div class="dash-brand">
+            <span class="dash-brand-dot"></span>
+            <h2>SeC Bank</h2>
+        </div>
+        <nav class="dash-nav">
+            <a class="dash-nav-link" href="/dashboard">Dashboard</a>
+            <a class="dash-nav-link active" href="/transfer">Transfer</a>
+            <a class="dash-nav-link" href="/cards">Cards</a>
+            <a class="dash-nav-link" href="/loans">Loans</a>
+            <a class="dash-nav-link" href="/settings">Settings</a>
+            <a class="dash-nav-link" href="/logout">Logout</a>
+        </nav>
+    </aside>
+
+    <main class="dash-main dashboard-fade">
+        <header class="dash-topbar">
+            <div>
+                <h2>Transfer Money</h2>
+                <p class="dash-muted">Send money between accounts</p>
+            </div>
+            <div class="dash-user-pill">{{ user }}</div>
+        </header>
+
+        <section class="dash-grid dash-grid-main">
+            <article class="dash-card">
+                <h3 style="margin-bottom: 12px;">New Transfer</h3>
+                <div class="dash-form-grid">
+                    <div>
+                        <label class="dash-muted">From Account</label>
+                        <select>
+                            <option>Primary Account •••• 2281</option>
+                            <option>Savings Account •••• 1002</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="dash-muted">Beneficiary</label>
+                        <input type="text" placeholder="Enter beneficiary name">
+                    </div>
+                    <div>
+                        <label class="dash-muted">IBAN / Account Number</label>
+                        <input type="text" placeholder="SA03 8000 0000 6080 1016 7519">
+                    </div>
+                    <div>
+                        <label class="dash-muted">Amount (SAR)</label>
+                        <input type="number" placeholder="2500">
+                    </div>
+                </div>
+                <div style="margin-top: 16px;">
+                    <button class="btn btn-primary">Continue Transfer</button>
+                </div>
+            </article>
+
+            <article class="dash-card">
+                <h3 style="margin-bottom: 12px;">Recent Transfers</h3>
+                <div class="dash-activity-list">
+                    <div class="dash-activity-item">
+                        <div><p>To Ahmed Al-Rashid</p><span>{{ datetime }}</span></div>
+                        <strong>-1,200 SAR</strong>
+                    </div>
+                    <div class="dash-activity-item">
+                        <div><p>To Sara Logistics</p><span>{{ datetime }}</span></div>
+                        <strong>-3,800 SAR</strong>
+                    </div>
+                    <div class="dash-activity-item">
+                        <div><p>From Payroll</p><span>{{ datetime }}</span></div>
+                        <strong class="positive">+7,500 SAR</strong>
+                    </div>
+                </div>
+            </article>
+        </section>
+    </main>
+</div>
+</body>
+</html>

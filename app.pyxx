@@ -1,0 +1,93 @@
+\from flask import Flask, render_template, request, redirect, url_for, 
+session
+import datetime
+
+app = Flask(__name__)
+app.secret_key = 'honeygate_pro_2026'
+
+user_status = {}
+
+# ===== LOG FUNCTION =====
+def log_attack(path, severity, action):
+    log_file = "attacks_log.txt"
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    ip = request.remote_addr
+
+    with open(log_file, "a", encoding="utf-8") as f:
+        f.write(f"[{timestamp}] {severity} | IP: {ip} | PATH: {path} | 
+ACTION: {action}\n")
+
+    print(f"[{severity}] {ip} -> {path} ({action})")
+
+
+# ===== HOME =====
+@app.route('/')
+def home():
+    return render_template('index.html')
+
+
+# ===== LOGIN (POST ONLY) =====
+@app.route('/login', methods=['POST'])
+def login():
+    email = request.form.get('email')
+    password = request.form.get('password')
+
+    if email == "admin@bank.com" and password == "123456":
+        session['user'] = email
+        return redirect(url_for('dashboard'))
+
+    return redirect(url_for('home'))
+
+
+# ===== DASHBOARD =====
+@app.route('/dashboard')
+def dashboard():
+    if 'user' in session:
+        now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+        session_id = "SEC-" + datetime.datetime.now().strftime("%f")
+
+        return render_template(
+            'dashboard.html',
+            user=session['user'],
+            sid=session_id,
+            datetime=now
+        )
+
+    return redirect(url_for('home'))
+
+
+# ===== HONEYPOT ROUTES =====
+@app.route('/admin/config_backup')
+@app.route('/settings')
+@app.route('/config')
+@app.route('/transfer')
+@app.route('/admin')
+def smart_trap():
+
+    ip = request.remote_addr
+    user_status[ip] = user_status.get(ip, 0) + 1
+    attempts = user_status[ip]
+
+    if attempts == 1:
+        log_attack(request.path, "LOW", "Probe detected")
+        return "<h1>404 Not Found</h1>", 404
+
+    elif attempts == 2:
+        log_attack(request.path, "MEDIUM", "Fake admin panel shown")
+        return render_template('admin_panel.html')
+
+    else:
+        log_attack(request.path, "CRITICAL", "Root console deployed")
+        return render_template('fake_root_console.html')
+
+
+# ===== LOGOUT =====
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('home'))
+
+
+# ===== RUN =====
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=8000)

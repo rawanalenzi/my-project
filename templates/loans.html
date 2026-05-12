@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SeC Bank Loans</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dashboard-premium">
+<div class="dash-shell">
+    <aside class="dash-sidebar">
+        <div class="dash-brand">
+            <span class="dash-brand-dot"></span>
+            <h2>SeC Bank</h2>
+        </div>
+        <nav class="dash-nav">
+            <a class="dash-nav-link" href="/dashboard">Dashboard</a>
+            <a class="dash-nav-link" href="/transfer">Transfer</a>
+            <a class="dash-nav-link" href="/cards">Cards</a>
+            <a class="dash-nav-link active" href="/loans">Loans</a>
+            <a class="dash-nav-link" href="/settings">Settings</a>
+            <a class="dash-nav-link" href="/logout">Logout</a>
+        </nav>
+    </aside>
+
+    <main class="dash-main dashboard-fade">
+        <header class="dash-topbar">
+            <div>
+                <h2>Loans & Financing</h2>
+                <p class="dash-muted">Explore financing options</p>
+            </div>
+            <div class="dash-user-pill">{{ user }}</div>
+        </header>
+
+        <section class="dash-actions-grid">
+            <article class="dash-card">
+                <h3>Personal Loan</h3>
+                <p class="dash-muted">Up to 250,000 SAR · from 4.2% APR</p>
+                <div style="margin-top: 12px;"><button class="btn btn-primary">Apply Now</button></div>
+            </article>
+            <article class="dash-card">
+                <h3>Auto Loan</h3>
+                <p class="dash-muted">Flexible terms · from 3.9% APR</p>
+                <div style="margin-top: 12px;"><button class="btn btn-primary">Apply Now</button></div>
+            </article>
+            <article class="dash-card">
+                <h3>Home Finance</h3>
+                <p class="dash-muted">Long-term mortgage solutions</p>
+                <div style="margin-top: 12px;"><button class="btn btn-primary">Apply Now</button></div>
+            </article>
+            <article class="dash-card">
+                <h3>Business Credit</h3>
+                <p class="dash-muted">Working capital facilities</p>
+                <div style="margin-top: 12px;"><button class="btn btn-primary">Apply Now</button></div>
+            </article>
+        </section>
+    </main>
+</div>
+</body>
+</html>
