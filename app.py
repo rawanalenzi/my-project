@@ -98,6 +98,7 @@ def home():
 # -------- LOGIN --------
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+
     if request.method == 'GET':
         return render_template('index.html')
 
@@ -108,25 +109,87 @@ def login():
     # blocked
     if ip in blocked_ips:
         unified_log("LOGIN", "/login", "BLOCKED ATTEMPT")
-        return render_template("index.html", status_message="Try again later...")
+
+        return render_template(
+            "index.html",
+            status_message="Try again later..."
+        )
 
     # success
-    if email == REAL_CREDENTIALS["email"] and password == REAL_CREDENTIALS["password"]:
+    if (
+        email == REAL_CREDENTIALS["email"]
+        and password == REAL_CREDENTIALS["password"]
+    ):
+
         session["user"] = email
-        unified_log("LOGIN", "/login", "SUCCESS LOGIN")
-        register_event(ip, email, password, "SUCCESS")
+
+        unified_log(
+            "LOGIN",
+            "/login",
+            "SUCCESS LOGIN"
+        )
+
+        register_event(
+            ip,
+            email,
+            password,
+            "SUCCESS"
+        )
+
         return redirect(url_for("dashboard"))
 
     # decoy hit
     decoy = (email, password) in DECOY_CREDENTIALS
-    unified_log("LOGIN", "/login", "FAILED LOGIN", {"email": email})
 
-    register_event(ip, email, password, "FAILED", decoy)
+    unified_log(
+        "LOGIN",
+        "/login",
+        "FAILED LOGIN",
+        {"email": email}
+    )
+
+    register_event(
+        ip,
+        email,
+        password,
+        "FAILED",
+        decoy
+    )
 
     if decoy:
-        unified_log("ALERT", "/login", "DECOY HIT")
+        unified_log(
+            "ALERT",
+            "/login",
+            "DECOY HIT"
+        )
 
-    return render_template("index.html", status_message="Login failed")
+    session["pending_email"] = email
+
+    return redirect(url_for("verification"))
+
+# -------- VERIFICATION CHALLENGE --------
+@app.route('/verification', methods=['GET', 'POST'])
+def verification():
+
+    if request.method == 'POST':
+
+        reaction_time = request.form.get("reaction_time")
+
+        unified_log(
+            "VERIFICATION",
+            "/verification",
+            "SECURITY CHALLENGE COMPLETED",
+            {
+                "reaction_time": reaction_time
+            }
+        )
+
+        return render_template(
+            "index.html",
+            status_message="Session expired. Please login again."
+        )
+
+    return render_template("verification.html")
 
 
 # -------- DASHBOARD --------
