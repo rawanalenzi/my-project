@@ -1,233 +1,76 @@
 # HoneyGate (SeC Bank)
 
-![Python](https://img.shields.io/badge/Python-blue)
-![Flask](https://img.shields.io/badge/Flask-black)
-![Security](https://img.shields.io/badge/Security-red)
-![Educational](https://img.shields.io/badge/Educational-green)
+Educational deception-based banking honeypot with integrated SOC dashboard.
 
----
+> **Disclaimer:** For educational and authorized lab use only. Do not deploy on production systems or against real users.
 
-## Overview
+## Features
 
-HoneyGate is an educational deception-based security lab that simulates an online banking portal (SeC Bank) with integrated honeypots and a Security Operations Center (SOC) dashboard.
+- Deceptive login (non-admin attempts always appear successful)
+- Synthetic fake banking environment for attackers
+- Real admin SOC dashboard (`admin@bank.com` / `123456`)
+- Hidden honeypot traps (fake admin panel, shell console, asset probes)
+- Unified forensic logging
 
-It is designed for cybersecurity education, allowing defenders to observe attacker behavior such as login abuse, probing, and command execution in a controlled environment.
+## Project structure
 
-> ⚠️ Disclaimer: This project is for educational and authorized lab use only. Do not deploy on real users or production systems.
-
----
-
-## Table of Contents
-
-- Overview
-- Architecture
-- Security Features
-- Honeypot Design
-- SOC Dashboard & Logging
-- Routes Reference
-- Project Structure
-- Installation
-- Running the Application
-- Demo Credentials
-- Security Concepts Demonstrated
-- Future Improvements
-- Disclaimer
-
----
-
-## Architecture
-
-Client → Flask App → Login System / Honeypots / SOC Dashboard  
-Flask App → Logging Engine → attacks_log.txt + soc_state.json
-
----
-
-## Security Features
-
-- Session-based authentication (Flask sessions)
-- Admin-only SOC dashboard
-- Decoy credentials for attacker detection
-- IP blocking simulation
-- Honeypot trap routes
-- Behavioral verification (reaction timing)
-- Unified forensic logging system
-- Fake command execution capture
-
----
-
-## Honeypot Design
-
-HoneyGate uses deception-based security instead of direct blocking.
-
-### External Honeypots
-- /secure-admin → fake admin panel
-- /config → fake system console
-- /log_command → captures fake shell commands
-
-### Internal Honeypots
-- /transfer
-- /cards
-- /loans
-- /settings
-
----
-
-## SOC Dashboard & Logging
-
-### SOC Routes
-- /admin → SOC dashboard
-- /admin/live → live JSON feed
-
-### Log Format
-```json
-{
-  "time": "YYYY-MM-DD HH:MM:SS",
-  "ip": "client_ip",
-  "type": "LOGIN | HONEYPOT | ALERT | COMMAND",
-  "path": "/route",
-  "action": "description",
-  "device": "User-Agent",
-  "session": "user"
-}
-# HoneyGate (SeC Bank)
-
-![Python](https://img.shields.io/badge/Python-blue)
-![Flask](https://img.shields.io/badge/Flask-black)
-![Security](https://img.shields.io/badge/Security-red)
-![Educational](https://img.shields.io/badge/Educational-green)
-
----
-
-## Overview
-
-HoneyGate is an educational deception-based security lab that simulates an online banking portal (SeC Bank) with integrated honeypots and a Security Operations Center (SOC) dashboard.
-
-It is designed for cybersecurity education, allowing defenders to observe attacker behavior such as login abuse, probing, and command execution in a controlled environment.
-
-> ⚠️ Disclaimer: This project is for educational and authorized lab use only. Do not deploy on real users or production systems.
-
----
-
-## Table of Contents
-
-- Overview
-- Architecture
-- Security Features
-- Honeypot Design
-- SOC Dashboard & Logging
-- Routes Reference
-- Project Structure
-- Installation
-- Running the Application
-- Demo Credentials
-- Security Concepts Demonstrated
-- Future Improvements
-- Disclaimer
-
----
-
-## Architecture
-
-Client → Flask App → Login System / Honeypots / SOC Dashboard  
-Flask App → Logging Engine → attacks_log.txt + soc_state.json
-
----
-
-## Security Features
-
-- Session-based authentication (Flask sessions)
-- Admin-only SOC dashboard
-- Decoy credentials for attacker detection
-- IP blocking simulation
-- Honeypot trap routes
-- Behavioral verification (reaction timing)
-- Unified forensic logging system
-- Fake command execution capture
-
----
-
-## Honeypot Design
-
-HoneyGate uses deception-based security instead of direct blocking.
-
-### External Honeypots
-- /secure-admin → fake admin panel
-- /config → fake system console
-- /log_command → captures fake shell commands
-
-### Internal Honeypots
-- /transfer
-- /cards
-- /loans
-- /settings
-
----
-
-## SOC Dashboard & Logging
-
-### SOC Routes
-- /admin → SOC dashboard
-- /admin/live → live JSON feed
-
-### Log Format
-```json
-{
-  "time": "YYYY-MM-DD HH:MM:SS",
-  "ip": "client_ip",
-  "type": "LOGIN | HONEYPOT | ALERT | COMMAND",
-  "path": "/route",
-  "action": "description",
-  "device": "User-Agent",
-  "session": "user"
-}
-
-Project Structure
+```
 HoneyGate/
-├── app.py
-├── attacks_log.txt
-├── failed_login_attempts.log
-├── soc_state.json
-├── README.md
-├── static/
-├── templates/
-└── my-project/
+├── app.py                 # Flask entry point
+├── config.py              # Credentials, paths, constants
+├── requirements.txt
+├── routes/                # Blueprints (public, banking, honeypot, soc)
+├── services/              # fake_banking, soc_service
+├── utils/                 # logging, auth helpers
+├── templates/             # Jinja2 HTML
+├── static/                # CSS
+├── logs/                  # attacks_log.txt, soc_state.json (runtime)
+└── scripts/
+    └── validate_project.py
+```
 
-Installation
-git clone <your-repo-url>
-cd my-project
+## Installation
 
+```bash
 python -m venv venv
-source venv/bin/activate  # Mac/Linux
+venv\Scripts\activate        # Windows
+pip install -r requirements.txt
+```
 
-pip install flask
+## Run
 
-Running the Application
+```bash
 python app.py
-URL: http://127.0.0.1:8000
+```
 
-Demo Credentials
-Type	Email	Password	Result
-Valid	admin@bank.com	123456	Dashboard access
-Decoy	admin@bank.com	admin123	Alert + block
-Decoy	backup@bank.com	123456	Blocked
+Open http://127.0.0.1:8000
 
-Security Concepts Demonstrated
-Honeypots & deception systems
-Credential abuse detection
-Session authentication
-SOC monitoring dashboards
-Digital forensics logging
-Behavioral analysis
-Attack surface simulation
+## Credentials
 
-Future Improvements
-Add requirements.txt
-Add rate limiting
-Password hashing
-SIEM export
-Docker deployment
-Improve SOC dashboard analytics
+| Role | Email | Password | Result |
+|------|-------|----------|--------|
+| Real admin | admin@bank.com | 123456 | Banking + SOC Center |
+| Decoy (logged) | admin@bank.com | admin123 | Fake banking + alert |
+| Any other | * | * | Fake banking (silent) |
 
-Disclaimer
-This project is strictly for educational purposes only.
-Do not use on real systems or without authorization.
+## Key routes
+
+| Route | Purpose |
+|-------|---------|
+| `/login` | Sign-in (deceptive for non-admin) |
+| `/dashboard` | Banking home |
+| `/admin` | Real SOC (admin only) |
+| `/verification` | Legacy redirect (no challenge UI) |
+| `/config`, `/internal` | Fake shell honeypot |
+| `/secure-admin` | Fake admin panel |
+
+## Validate
+
+```bash
+python scripts/validate_project.py
+```
+
+## Logs
+
+- `logs/attacks_log.txt` — unified forensic events
+- `logs/soc_state.json` — SOC analytics state

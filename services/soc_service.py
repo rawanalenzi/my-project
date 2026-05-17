@@ -3,9 +3,9 @@ import ast
 import datetime
 import json
 import os
-from collections import Counter, defaultdict
+from collections import Counter
 
-STATE_FILE = "soc_state.json"
+from config import ATTACKS_LOG_FILE, SOC_STATE_FILE
 
 
 def _default_state():
@@ -18,10 +18,10 @@ def _default_state():
 
 
 def load_state():
-    if not os.path.exists(STATE_FILE):
+    if not os.path.exists(SOC_STATE_FILE):
         return _default_state()
     try:
-        with open(STATE_FILE, encoding="utf-8") as f:
+        with open(SOC_STATE_FILE, encoding="utf-8") as f:
             data = json.load(f)
         for key in _default_state():
             data.setdefault(key, _default_state()[key])
@@ -32,7 +32,8 @@ def load_state():
 
 def save_state(state):
     state["saved_at"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    with open(STATE_FILE, "w", encoding="utf-8") as f:
+    os.makedirs(os.path.dirname(SOC_STATE_FILE), exist_ok=True)
+    with open(SOC_STATE_FILE, "w", encoding="utf-8") as f:
         json.dump(state, f, indent=2)
 
 
@@ -56,8 +57,7 @@ def register_login_event(state, ip, email, password, status, decoy_hit=False, de
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     ip_events = [e for e in state["login_events"] if e.get("ip") == ip]
     risk, reason = _risk_for_ip(
-        ip_events
-        + [{"email": email, "password": password, "decoy_hit": decoy_hit}]
+        ip_events + [{"email": email, "password": password, "decoy_hit": decoy_hit}]
     )
     blocked = ip in state["blocked_ips"]
 
@@ -148,7 +148,6 @@ def build_top_attackers(state, limit=5):
 
 
 def hourly_stats(state):
-    """Login attempts bucketed by hour for charts."""
     events = state.get("login_events", [])
     buckets = Counter()
     for event in events:
@@ -158,7 +157,7 @@ def hourly_stats(state):
     if not buckets:
         return {"labels": ["08:00", "10:00", "12:00", "14:00", "16:00"], "counts": [0, 0, 0, 0, 0]}
     labels = sorted(buckets.keys())
-    return {"labels": labels, "counts": [buckets[l] for l in labels]}
+    return {"labels": labels, "counts": [buckets[label] for label in labels]}
 
 
 def live_feed_items(state, limit=10):
@@ -178,11 +177,11 @@ def live_feed_items(state, limit=10):
 
 def read_attack_log_tail(limit=50):
     """Parse unified log lines for supplemental SOC review."""
-    if not os.path.exists("attacks_log.txt"):
+    if not os.path.exists(ATTACKS_LOG_FILE):
         return []
     entries = []
     try:
-        with open("attacks_log.txt", encoding="utf-8") as f:
+        with open(ATTACKS_LOG_FILE, encoding="utf-8") as f:
             lines = f.readlines()[-limit:]
         for line in lines:
             line = line.strip()

@@ -3,6 +3,8 @@ import hashlib
 import random
 from datetime import datetime, timedelta
 
+from config import ROLE_ADMIN, ROLE_DECOY
+
 
 def _seed_from(email, ip):
     digest = hashlib.sha256(f"{email}|{ip}".encode()).hexdigest()
@@ -76,11 +78,11 @@ def banking_template_context(session, ip, nav_active=None):
         "user": session.get("user", "client@secbank.com"),
         "datetime": now,
         "sid": sid,
-        "is_admin": role == "admin",
-        "is_decoy": role == "decoy",
+        "is_admin": role == ROLE_ADMIN,
+        "is_decoy": role == ROLE_DECOY,
         "nav_active": nav_active or "",
     }
-    if role == "decoy":
+    if role == ROLE_DECOY:
         profile = session.get("fake_profile") or build_fake_profile(ctx["user"], ip)
         ctx.update(profile)
     else:

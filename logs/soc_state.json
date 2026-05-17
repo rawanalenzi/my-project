@@ -1,19 +1,20 @@
 {
-  "saved_at": "2026-05-17 14:12:36",
+  "saved_at": "2026-05-17 14:38:12",
   "blocked_ips": [
     "127.0.0.1"
   ],
   "behavior_profiles": {
     "127.0.0.1": {
       "ip": "127.0.0.1",
-      "attempt_count": 12,
+      "attempt_count": 14,
       "emails": [
         "admin@bank.com",
         "bank@admin.com",
         "iugibi@gmail.com",
         "attacker@test.com",
         "x@y.com",
-        "a@b.com"
+        "a@b.com",
+        "test@x.com"
       ],
       "passwords": [
         "123456",
@@ -26,7 +27,7 @@
       "risk_score": "HIGH",
       "reason": "Repeated probing / decoy credential use",
       "blocked": true,
-      "latest_attempt": "2026-05-17 13:54:34",
+      "latest_attempt": "2026-05-17 14:31:08",
       "decoy_hits": 0
     },
     "192.168.8.108": {
@@ -53,8 +54,8 @@
         "rioagnno"
       ],
       "decoy_hits": 0,
-      "attempt_count": 1,
-      "latest_attempt": "2026-05-17 14:12:36",
+      "attempt_count": 3,
+      "latest_attempt": "2026-05-17 14:38:12",
       "risk_score": "LOW",
       "reason": "Low-volume probing behavior",
       "blocked": false
@@ -242,6 +243,58 @@
       "status": "APPARENT_SUCCESS",
       "timestamp": "2026-05-17 14:12:36",
       "timestamp_text": "2026-05-17 14:12:36",
+      "decoy_hit": false,
+      "deceptive": true,
+      "risk": "LOW",
+      "reason": "Low-volume probing behavior",
+      "blocked": false
+    },
+    {
+      "ip": "127.0.0.1",
+      "email": "test@x.com",
+      "password": "wrong",
+      "status": "APPARENT_SUCCESS",
+      "timestamp": "2026-05-17 14:31:08",
+      "timestamp_text": "2026-05-17 14:31:08",
+      "decoy_hit": false,
+      "deceptive": true,
+      "risk": "HIGH",
+      "reason": "Repeated probing / decoy credential use",
+      "blocked": true
+    },
+    {
+      "ip": "127.0.0.1",
+      "email": "admin@bank.com",
+      "password": "123456",
+      "status": "SUCCESS",
+      "timestamp": "2026-05-17 14:31:08",
+      "timestamp_text": "2026-05-17 14:31:08",
+      "decoy_hit": false,
+      "deceptive": false,
+      "risk": "HIGH",
+      "reason": "Repeated probing / decoy credential use",
+      "blocked": true
+    },
+    {
+      "ip": "192.168.8.179",
+      "email": "hht@gmail.com",
+      "password": "rioagnno",
+      "status": "APPARENT_SUCCESS",
+      "timestamp": "2026-05-17 14:33:19",
+      "timestamp_text": "2026-05-17 14:33:19",
+      "decoy_hit": false,
+      "deceptive": true,
+      "risk": "LOW",
+      "reason": "Low-volume probing behavior",
+      "blocked": false
+    },
+    {
+      "ip": "192.168.8.179",
+      "email": "hht@gmail.com",
+      "password": "rioagnno",
+      "status": "APPARENT_SUCCESS",
+      "timestamp": "2026-05-17 14:38:12",
+      "timestamp_text": "2026-05-17 14:38:12",
       "decoy_hit": false,
       "deceptive": true,
       "risk": "LOW",
