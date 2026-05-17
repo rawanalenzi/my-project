@@ -30,6 +30,7 @@ Type 'help' for available commands.</div>
                 else if (command === 'cat db_config.php') response = "\nERROR: Database connection encrypted. Key required.";
                 
                 output.innerHTML += response;
+                fetch('/log_command', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({command: command})}).catch(function(){});
                 this.value = '';
                 window.scrollTo(0, document.body.scrollHeight);
             }

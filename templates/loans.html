@@ -8,50 +8,43 @@
 </head>
 <body class="dashboard-premium">
 <div class="dash-shell">
-    <aside class="dash-sidebar">
-        <div class="dash-brand">
-            <span class="dash-brand-dot"></span>
-            <h2>SeC Bank</h2>
-        </div>
-        <nav class="dash-nav">
-            <a class="dash-nav-link" href="/dashboard">Dashboard</a>
-            <a class="dash-nav-link" href="/transfer">Transfer</a>
-            <a class="dash-nav-link" href="/cards">Cards</a>
-            <a class="dash-nav-link active" href="/loans">Loans</a>
-            <a class="dash-nav-link" href="/settings">Settings</a>
-            <a class="dash-nav-link" href="/logout">Logout</a>
-        </nav>
-    </aside>
-
+    {% include 'partials/banking_sidebar.html' %}
     <main class="dash-main dashboard-fade">
         <header class="dash-topbar">
             <div>
                 <h2>Loans & Financing</h2>
-                <p class="dash-muted">Explore financing options</p>
+                <p class="dash-muted">Pre-approved up to {{ "{:,}".format(loan_preapproved) }} SAR</p>
             </div>
-            <div class="dash-user-pill">{{ user }}</div>
+            <div class="dash-user-pill">{{ display_name }}</div>
         </header>
-
-        <section class="dash-actions-grid">
+        {% if loan_message %}
+        <div class="status-message" style="margin-bottom:16px">{{ loan_message }}</div>
+        {% endif %}
+        <section class="dash-grid dash-grid-main">
             <article class="dash-card">
-                <h3>Personal Loan</h3>
-                <p class="dash-muted">Up to 250,000 SAR · from 4.2% APR</p>
-                <div style="margin-top: 12px;"><button class="btn btn-primary">Apply Now</button></div>
-            </article>
-            <article class="dash-card">
-                <h3>Auto Loan</h3>
-                <p class="dash-muted">Flexible terms · from 3.9% APR</p>
-                <div style="margin-top: 12px;"><button class="btn btn-primary">Apply Now</button></div>
-            </article>
-            <article class="dash-card">
-                <h3>Home Finance</h3>
-                <p class="dash-muted">Long-term mortgage solutions</p>
-                <div style="margin-top: 12px;"><button class="btn btn-primary">Apply Now</button></div>
-            </article>
-            <article class="dash-card">
-                <h3>Business Credit</h3>
-                <p class="dash-muted">Working capital facilities</p>
-                <div style="margin-top: 12px;"><button class="btn btn-primary">Apply Now</button></div>
+                <h3>Apply for a Loan</h3>
+                <form method="POST" class="dash-form-grid" style="margin-top:12px">
+                    <div>
+                        <label class="dash-muted">Product</label>
+                        <select name="product">
+                            <option>Personal Loan</option>
+                            <option>Auto Loan</option>
+                            <option>Home Finance</option>
+                            <option>Business Credit</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="dash-muted">Amount (SAR)</label>
+                        <input type="number" name="amount" placeholder="{{ loan_preapproved }}" required>
+                    </div>
+                    <div style="grid-column:1/-1">
+                        <label class="dash-muted">Purpose</label>
+                        <input type="text" name="purpose" placeholder="e.g. home renovation" required>
+                    </div>
+                    <div style="grid-column:1/-1;margin-top:8px">
+                        <button class="btn btn-primary" type="submit">Submit Application</button>
+                    </div>
+                </form>
             </article>
         </section>
     </main>

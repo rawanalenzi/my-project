@@ -1,36 +1,67 @@
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+"""
+HoneyGate Flask application — deception-based banking honeypot.
+
+Authentication model:
+  • admin@bank.com / 123456  → real operator (ROLE_ADMIN) → banking UI + SOC (/admin)
+  • Any other credentials    → apparent success (ROLE_DECOY) → synthetic banking only
+
+Attackers never see verification challenges or "suspicious activity" messaging.
+"""
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    session,
+    jsonify,
+)
 import datetime
-import json
-import os
-import random
-import time
-import tempfile
 from functools import wraps
 
+from fake_banking import banking_template_context, build_fake_profile
+from soc_service import (
+    load_state,
+    register_login_event,
+    mark_decoy_hit,
+    build_admin_summary,
+    build_grouped_results,
+    build_top_attackers,
+    hourly_stats,
+    live_feed_items,
+)
+
 app = Flask(__name__)
-app.secret_key = 'honeygate_pro_2026'
+app.secret_key = "honeygate_pro_2026"
 
-STATE_FILE = "soc_state.json"
-login_events = []
-blocked_ips = set()
-behavior_profiles = {}
+# ── Real operator credentials (only path to SOC + legitimate session) ──
+REAL_ADMIN_EMAIL = "admin@bank.com"
+REAL_ADMIN_PASSWORD = "123456"
 
-REAL_CREDENTIALS = {"email": "admin@bank.com", "password": "123456"}
+# Known decoy pairs — logged as intelligence, still receive fake success UX
 DECOY_CREDENTIALS = {
-    ("admin@bank.com", "admin123"),
-    ("backup@bank.com", "123456"),
+    (REAL_ADMIN_EMAIL, "admin123"),
+    ("backup@bank.com", REAL_ADMIN_PASSWORD),
 }
 
+ROLE_ADMIN = "admin"
+ROLE_DECOY = "decoy"
+
 # =========================
-# 🔥 UNIFIED LOGGER
+# Logging
 # =========================
 def get_client_ip():
-    return request.headers.get("X-Forwarded-For", request.remote_addr)
+    forwarded = request.headers.get("X-Forwarded-For", "")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    return request.remote_addr or "unknown"
+
 
 def unified_log(event_type, path, action, extra=None):
     ip = get_client_ip()
     user_agent = request.headers.get("User-Agent", "Unknown")
-    session_id = session.get("user", "anonymous")
+    session_user = session.get("user", "anonymous")
+    session_role = session.get("role", "none")
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     entry = {
@@ -40,232 +71,352 @@ def unified_log(event_type, path, action, extra=None):
         "path": path,
         "action": action,
         "device": user_agent,
-        "session": session_id,
-        "extra": extra or {}
+        "session": session_user,
+        "role": session_role,
+        "extra": extra or {},
     }
 
     with open("attacks_log.txt", "a", encoding="utf-8") as f:
         f.write(str(entry) + "\n")
 
 
-# =========================
-# LOGIN EVENTS TRACKING
-# =========================
-def register_event(ip, email, password, status, decoy=False):
-    login_events.append({
-        "ip": ip,
-        "email": email,
-        "password": password,
-        "status": status,
-        "time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "decoy": decoy
-    })
+def log_page_visit(path):
+    unified_log("ACCESS", path, "PAGE VIEW")
 
-    if decoy:
-        blocked_ips.add(ip)
+
+def log_decoy_action(path, action, extra=None):
+    """Silent intelligence capture for fake-banking interactions."""
+    if session.get("role") == ROLE_DECOY:
+        unified_log("DECOY_ACTION", path, action, extra)
 
 
 # =========================
-# AUTH DECORATORS
+# Auth decorators
 # =========================
-def login_required(view):
+def session_required(view):
     @wraps(view)
     def wrapper(*args, **kwargs):
-        if "user" not in session:
+        if "user" not in session or "role" not in session:
             return redirect(url_for("login"))
         return view(*args, **kwargs)
+
     return wrapper
 
 
 def admin_required(view):
+    """Restrict route to the real bank operator (not honeypot visitors)."""
+
     @wraps(view)
     def wrapper(*args, **kwargs):
-        if session.get("user") != "admin@bank.com":
-            return redirect(url_for("login"))
+        if session.get("role") != ROLE_ADMIN:
+            # Honeypot: attackers probing /admin see a fake internal panel
+            unified_log("HONEYPOT", request.path, "UNAUTHORIZED ADMIN PROBE")
+            now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+            return render_template("honeypot_admin.html", datetime=now), 200
         return view(*args, **kwargs)
+
     return wrapper
 
 
-# =========================
-# ROUTES
-# =========================
+def is_real_admin_credentials(email, password):
+    return email == REAL_ADMIN_EMAIL and password == REAL_ADMIN_PASSWORD
 
-@app.route('/')
+
+def establish_decoy_session(email, ip):
+    """Create a believable logged-in state for non-admin visitors."""
+    profile = build_fake_profile(email, ip)
+    session["user"] = email
+    session["role"] = ROLE_DECOY
+    session["fake_profile"] = profile
+    session["bank_sid"] = f"SEC-{datetime.datetime.now().strftime('%f')}"
+
+
+def establish_admin_session(email):
+    session["user"] = email
+    session["role"] = ROLE_ADMIN
+    session.pop("fake_profile", None)
+    session["bank_sid"] = f"ADM-{datetime.datetime.now().strftime('%f')}"
+
+
+def ctx(nav_active=None):
+    return banking_template_context(session, get_client_ip(), nav_active=nav_active)
+
+
+# =========================
+# Routes — public
+# =========================
+@app.route("/")
 def home():
-    return redirect(url_for('login'))
+    return redirect(url_for("login"))
 
 
-# -------- LOGIN --------
-@app.route('/login', methods=['GET', 'POST'])
+@app.route("/login", methods=["GET", "POST"])
 def login():
+    if request.method == "GET":
+        # Never show failed-login or security warnings — login form only
+        return render_template("index.html")
 
-    if request.method == 'GET':
-        return render_template('index.html')
-
-    email = request.form.get("email")
-    password = request.form.get("password")
+    email = (request.form.get("email") or "").strip().lower()
+    password = request.form.get("password") or ""
     ip = get_client_ip()
+    state = load_state()
 
-    # blocked
-    if ip in blocked_ips:
-        unified_log("LOGIN", "/login", "BLOCKED ATTEMPT")
-
-        return render_template(
-            "index.html",
-            status_message="Try again later..."
-        )
-
-    # success
-    if (
-        email == REAL_CREDENTIALS["email"]
-        and password == REAL_CREDENTIALS["password"]
-    ):
-
-        session["user"] = email
-
-        unified_log(
-            "LOGIN",
-            "/login",
-            "SUCCESS LOGIN"
-        )
-
-        register_event(
-            ip,
-            email,
-            password,
-            "SUCCESS"
-        )
-
+    # ── Real admin → legitimate banking + SOC access ──
+    if is_real_admin_credentials(email, password):
+        establish_admin_session(email)
+        register_login_event(state, ip, email, password, "SUCCESS")
+        unified_log("LOGIN", "/login", "REAL ADMIN LOGIN")
         return redirect(url_for("dashboard"))
 
-    # decoy hit
-    decoy = (email, password) in DECOY_CREDENTIALS
-
-    unified_log(
-        "LOGIN",
-        "/login",
-        "FAILED LOGIN",
-        {"email": email}
-    )
-
-    register_event(
-        ip,
-        email,
-        password,
-        "FAILED",
-        decoy
-    )
-
-    if decoy:
+    # ── Deception path: every other attempt "succeeds" into fake banking ──
+    decoy_hit = (email, password) in DECOY_CREDENTIALS
+    if decoy_hit:
+        mark_decoy_hit(state, ip)
         unified_log(
             "ALERT",
             "/login",
-            "DECOY HIT"
+            "DECOY CREDENTIAL HIT",
+            {"email": email, "password": password},
         )
 
-    session["pending_email"] = email
-
-    return redirect(url_for("verification"))
-
-# -------- VERIFICATION CHALLENGE --------
-@app.route('/verification', methods=['GET', 'POST'])
-def verification():
-
-    if request.method == 'POST':
-
-        reaction_time = request.form.get("reaction_time")
-
-        unified_log(
-            "VERIFICATION",
-            "/verification",
-            "SECURITY CHALLENGE COMPLETED",
-            {
-                "reaction_time": reaction_time
-            }
-        )
-
-        return render_template(
-            "index.html",
-            status_message="Session expired. Please login again."
-        )
-
-    return render_template("verification.html")
+    establish_decoy_session(
+        email or f"guest-{ip.replace('.', '-')}@session.local",
+        ip,
+    )
+    register_login_event(
+        state,
+        ip,
+        email,
+        password,
+        "APPARENT_SUCCESS",
+        decoy_hit=decoy_hit,
+        deceptive=True,
+    )
+    unified_log(
+        "LOGIN",
+        "/login",
+        "DECEPTIVE LOGIN ACCEPTED",
+        {"email": email, "decoy_hit": decoy_hit},
+    )
+    return redirect(url_for("dashboard"))
 
 
-# -------- DASHBOARD --------
-@app.route('/dashboard')
-@login_required
+@app.route("/verification", methods=["GET", "POST"])
+def verification_legacy():
+    """Legacy URL — redirect silently (no challenge UI that tips off attackers)."""
+    unified_log("ACCESS", "/verification", "LEGACY URL HIT")
+    if session.get("user"):
+        return redirect(url_for("dashboard"))
+    return redirect(url_for("login"))
+
+
+# =========================
+# Banking portal (shared URLs; admin vs decoy content differs via ctx)
+# =========================
+@app.route("/dashboard")
+@session_required
 def dashboard():
-    unified_log("ACCESS", "/dashboard", "USER VIEW")
-    return render_template("dashboard.html", user=session["user"])
+    log_page_visit("/dashboard")
+    return render_template("dashboard.html", **ctx(nav_active="dashboard"))
 
 
-# -------- FAKE ADMIN (HONEYPOT) --------
-@app.route('/secure-admin')
-def fake_admin():
-    unified_log("HONEYPOT", "/secure-admin", "ADMIN ACCESS ATTEMPT")
-    return render_template("admin.html")
+@app.route("/transfer", methods=["GET", "POST"])
+@session_required
+def transfer():
+    log_page_visit("/transfer")
+    transfer_message = None
+
+    if request.method == "POST":
+        payload = {
+            "beneficiary": request.form.get("beneficiary"),
+            "iban": request.form.get("iban"),
+            "amount": request.form.get("amount"),
+            "from_account": request.form.get("from_account"),
+        }
+        if session.get("role") == ROLE_DECOY:
+            log_decoy_action("/transfer", "FAKE TRANSFER ATTEMPT", payload)
+            transfer_message = (
+                "Transfer submitted successfully. Reference: TRF-"
+                + datetime.datetime.now().strftime("%H%M%S")
+            )
+        else:
+            unified_log("TRANSFER", "/transfer", "ADMIN TRANSFER FORM USE", payload)
+
+    return render_template(
+        "transfer.html",
+        transfer_message=transfer_message,
+        **ctx(nav_active="transfer"),
+    )
 
 
-# -------- FAKE CONFIG TRAP --------
-@app.route('/config')
-def config_trap():
-    ip = get_client_ip()
-    unified_log("HONEYPOT", "/config", "SYSTEM PROBE")
+@app.route("/cards")
+@session_required
+def cards():
+    log_page_visit("/cards")
+    return render_template("cards.html", **ctx(nav_active="cards"))
 
-    if ip in blocked_ips:
-        return "Access Denied", 403
 
+@app.route("/cards/action", methods=["POST"])
+@session_required
+def cards_action():
+    action = request.form.get("action", "unknown")
+    log_decoy_action("/cards/action", "CARD CONTROL CLICK", {"action": action})
+    return redirect(url_for("cards"))
+
+
+@app.route("/loans", methods=["GET", "POST"])
+@session_required
+def loans():
+    log_page_visit("/loans")
+    loan_message = None
+    if request.method == "POST" and session.get("role") == ROLE_DECOY:
+        payload = {
+            "amount": request.form.get("amount"),
+            "purpose": request.form.get("purpose"),
+            "product": request.form.get("product"),
+        }
+        log_decoy_action("/loans", "FAKE LOAN APPLICATION", payload)
+        loan_message = (
+            "Application received. A relationship manager will contact you within 24 hours."
+        )
+    return render_template(
+        "loans.html",
+        loan_message=loan_message,
+        **ctx(nav_active="loans"),
+    )
+
+
+@app.route("/statements")
+@session_required
+def statements():
+    log_page_visit("/statements")
+    return render_template("statements.html", **ctx(nav_active="statements"))
+
+
+@app.route("/settings", methods=["GET", "POST"])
+@session_required
+def settings():
+    log_page_visit("/settings")
+    settings_message = None
+    if request.method == "POST":
+        unified_log(
+            "SETTINGS",
+            "/settings",
+            "PROFILE UPDATE ATTEMPT",
+            {"fields": list(request.form.keys())},
+        )
+        settings_message = "Your preferences have been saved."
+    return render_template(
+        "settings.html",
+        settings_message=settings_message,
+        **ctx(nav_active="settings"),
+    )
+
+
+# Decoy-only API for dashboard charts (never exposes SOC data)
+@app.route("/bank/api/dashboard-data")
+@session_required
+def bank_dashboard_data():
+    if session.get("role") != ROLE_DECOY:
+        return jsonify({"error": "not found"}), 404
+    profile = session.get("fake_profile") or build_fake_profile(
+        session.get("user"), get_client_ip()
+    )
+    return jsonify(
+        {
+            "labels": profile.get("chart_labels", []),
+            "counts": profile.get("chart_counts", []),
+            "items": profile.get("transactions", []),
+        }
+    )
+
+
+# =========================
+# Hidden honeypot traps (no auth — probes are logged)
+# =========================
+@app.route("/secure-admin")
+@app.route("/admin/config_backup")
+def honeypot_secure_admin():
+    unified_log("HONEYPOT", request.path, "FAKE ADMIN PANEL PROBE")
+    now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+    return render_template("honeypot_admin.html", datetime=now)
+
+
+@app.route("/config")
+@app.route("/internal")
+@app.route("/internal/core")
+@app.route("/api/v1/admin")
+def honeypot_config_console():
+    unified_log("HONEYPOT", request.path, "SYSTEM CONSOLE PROBE")
     return render_template("fake_root_console.html")
 
 
-# -------- COMMAND LOGGER --------
-@app.route('/log_command', methods=['POST'])
-def log_command():
-    command = request.form.get("command")
-
-    unified_log(
-        "COMMAND",
-        "/fake_console",
-        "EXECUTED COMMAND",
-        {"command": command}
+@app.route("/backup.sql")
+@app.route("/.env")
+@app.route("/wp-admin")
+def honeypot_asset_probe():
+    unified_log("HONEYPOT", request.path, "SENSITIVE ASSET PROBE")
+    return (
+        "<!DOCTYPE html><html><body><h1>404 Not Found</h1>"
+        "<p>The requested resource was not found on this server.</p></body></html>",
+        404,
     )
 
+
+@app.route("/log_command", methods=["POST"])
+def log_command():
+    command = request.form.get("command", "")
+    if request.is_json:
+        command = (request.get_json(silent=True) or {}).get("command", command)
+    unified_log("COMMAND", "/log_command", "FAKE SHELL COMMAND", {"command": command})
     return jsonify({"status": "logged"})
 
 
-# -------- ADMIN SOC --------
-@app.route('/admin')
+# =========================
+# Real SOC (admin session only)
+# =========================
+@app.route("/admin")
+@session_required
 @admin_required
-def admin():
-    unified_log("SOC", "/admin", "DASHBOARD VIEW")
+def admin_soc():
+    unified_log("SOC", "/admin", "SOC DASHBOARD VIEW")
+    state = load_state()
+    selected_ip = request.args.get("ip", "")
+    selected_risk = request.args.get("risk", "")
+    return render_template(
+        "admin.html",
+        summary=build_admin_summary(state),
+        grouped_results=build_grouped_results(state, selected_ip, selected_risk),
+        top_attackers=build_top_attackers(state),
+        all_ips=sorted({e["ip"] for e in state.get("login_events", [])}),
+        selected_ip=selected_ip,
+        selected_risk=selected_risk,
+    )
 
-    summary = {
-        "total": len(login_events),
-        "blocked": len(blocked_ips),
-    }
 
-    return render_template("admin.html", summary=summary)
-
-
-# -------- LIVE FEED --------
-@app.route('/admin/live')
+@app.route("/admin/live")
+@session_required
 @admin_required
-def live():
-    return jsonify({
-        "items": list(reversed(login_events[-10:]))
-    })
+def admin_live():
+    return jsonify({"items": live_feed_items(load_state())})
 
 
-# -------- LOGOUT --------
-@app.route('/logout')
+@app.route("/admin/stats")
+@session_required
+@admin_required
+def admin_stats():
+    return jsonify(hourly_stats(load_state()))
+
+
+# =========================
+# Logout
+# =========================
+@app.route("/logout")
 def logout():
+    unified_log("ACCESS", "/logout", "SESSION END")
     session.clear()
-    return redirect(url_for("home"))
+    return redirect(url_for("login"))
 
 
-# =========================
-# RUN
-# =========================
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=8000)
+if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0", port=8000)

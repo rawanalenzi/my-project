@@ -1,76 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Security Verification</title>
-
-    <style>
-
-        body{
-            background:#0f172a;
-            color:white;
-            font-family:Arial;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            height:100vh;
-        }
-
-        .box{
-            background:#1e293b;
-            padding:40px;
-            border-radius:12px;
-            text-align:center;
-            width:350px;
-        }
-
-        button{
-            margin-top:20px;
-            padding:12px 20px;
-            border:none;
-            border-radius:8px;
-            cursor:pointer;
-            font-size:16px;
-        }
-
-    </style>
+<meta charset="UTF-8">
+<meta http-equiv="refresh" content="0;url=/login">
+<title>SeC Bank</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-
-<body>
-
-<div class="box">
-
-    <h2>Security Verification</h2>
-
-    <p>
-        Suspicious activity detected.<br>
-        Complete verification to continue.
-    </p>
-
-    <form method="POST">
-
-        <input type="hidden" id="reaction_time" name="reaction_time">
-
-        <button type="submit" onclick="trackTime()">
-            Click To Verify
-        </button>
-
-    </form>
-
+<body class="premium-login">
+<div class="premium-login-shell">
+    <div class="premium-login-card" style="text-align:center">
+        <p class="muted">Redirecting to online banking…</p>
+    </div>
 </div>
-
-<script>
-
-    const start = Date.now();
-
-    function trackTime(){
-
-        const reaction = Date.now() - start;
-
-        document.getElementById("reaction_time").value = reaction;
-
-    }
-
-</script>
-
 </body>
 </html>

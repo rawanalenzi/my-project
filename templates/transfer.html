@@ -8,74 +8,57 @@
 </head>
 <body class="dashboard-premium">
 <div class="dash-shell">
-    <aside class="dash-sidebar">
-        <div class="dash-brand">
-            <span class="dash-brand-dot"></span>
-            <h2>SeC Bank</h2>
-        </div>
-        <nav class="dash-nav">
-            <a class="dash-nav-link" href="/dashboard">Dashboard</a>
-            <a class="dash-nav-link active" href="/transfer">Transfer</a>
-            <a class="dash-nav-link" href="/cards">Cards</a>
-            <a class="dash-nav-link" href="/loans">Loans</a>
-            <a class="dash-nav-link" href="/settings">Settings</a>
-            <a class="dash-nav-link" href="/logout">Logout</a>
-        </nav>
-    </aside>
-
+    {% include 'partials/banking_sidebar.html' %}
     <main class="dash-main dashboard-fade">
         <header class="dash-topbar">
             <div>
                 <h2>Transfer Money</h2>
                 <p class="dash-muted">Send money between accounts</p>
             </div>
-            <div class="dash-user-pill">{{ user }}</div>
+            <div class="dash-user-pill">{{ display_name }}</div>
         </header>
-
+        {% if transfer_message %}
+        <div class="status-message" style="margin-bottom: 16px;">{{ transfer_message }}</div>
+        {% endif %}
         <section class="dash-grid dash-grid-main">
             <article class="dash-card">
                 <h3 style="margin-bottom: 12px;">New Transfer</h3>
+                <form method="POST" action="/transfer">
                 <div class="dash-form-grid">
                     <div>
                         <label class="dash-muted">From Account</label>
-                        <select>
-                            <option>Primary Account •••• 2281</option>
-                            <option>Savings Account •••• 1002</option>
+                        <select name="from_account">
+                            <option>{{ account_mask }}</option>
+                            <option>{{ savings_mask }}</option>
                         </select>
                     </div>
                     <div>
                         <label class="dash-muted">Beneficiary</label>
-                        <input type="text" placeholder="Enter beneficiary name">
+                        <input type="text" name="beneficiary" placeholder="Enter beneficiary name" required>
                     </div>
                     <div>
                         <label class="dash-muted">IBAN / Account Number</label>
-                        <input type="text" placeholder="SA03 8000 0000 6080 1016 7519">
+                        <input type="text" name="iban" placeholder="SA03 8000 0000 6080 1016 7519" required>
                     </div>
                     <div>
                         <label class="dash-muted">Amount (SAR)</label>
-                        <input type="number" placeholder="2500">
+                        <input type="number" name="amount" placeholder="2500" required>
                     </div>
                 </div>
                 <div style="margin-top: 16px;">
-                    <button class="btn btn-primary">Continue Transfer</button>
+                    <button class="btn btn-primary" type="submit">Continue Transfer</button>
                 </div>
+                </form>
             </article>
-
             <article class="dash-card">
                 <h3 style="margin-bottom: 12px;">Recent Transfers</h3>
                 <div class="dash-activity-list">
+                    {% for t in transfer_history %}
                     <div class="dash-activity-item">
-                        <div><p>To Ahmed Al-Rashid</p><span>{{ datetime }}</span></div>
-                        <strong>-1,200 SAR</strong>
+                        <div><p>{% if t.amount > 0 %}From{% else %}To{% endif %} {{ t.beneficiary }}</p><span>{{ t.when }}</span></div>
+                        <strong class="{% if t.amount > 0 %}positive{% endif %}">{{ t.amount|abs }} SAR</strong>
                     </div>
-                    <div class="dash-activity-item">
-                        <div><p>To Sara Logistics</p><span>{{ datetime }}</span></div>
-                        <strong>-3,800 SAR</strong>
-                    </div>
-                    <div class="dash-activity-item">
-                        <div><p>From Payroll</p><span>{{ datetime }}</span></div>
-                        <strong class="positive">+7,500 SAR</strong>
-                    </div>
+                    {% endfor %}
                 </div>
             </article>
         </section>

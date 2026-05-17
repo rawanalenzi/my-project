@@ -1,0 +1,18 @@
+<aside class="dash-sidebar">
+    <div class="dash-brand">
+        <span class="dash-brand-dot"></span>
+        <h2>SeC Bank</h2>
+    </div>
+    <nav class="dash-nav">
+        <a class="dash-nav-link{% if nav_active == 'dashboard' %} active{% endif %}" href="/dashboard">Dashboard</a>
+        <a class="dash-nav-link{% if nav_active == 'transfer' %} active{% endif %}" href="/transfer">Transfer</a>
+        <a class="dash-nav-link{% if nav_active == 'cards' %} active{% endif %}" href="/cards">Cards</a>
+        <a class="dash-nav-link{% if nav_active == 'loans' %} active{% endif %}" href="/loans">Loans</a>
+        <a class="dash-nav-link{% if nav_active == 'statements' %} active{% endif %}" href="/statements">Statements</a>
+        <a class="dash-nav-link{% if nav_active == 'settings' %} active{% endif %}" href="/settings">Settings</a>
+        {% if is_admin %}
+        <a class="dash-nav-link{% if nav_active == 'soc' %} active{% endif %}" href="/admin">SOC Center</a>
+        {% endif %}
+        <a class="dash-nav-link" href="/logout">Logout</a>
+    </nav>
+</aside>
