@@ -1,67 +1,188 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HoneyGate | لوحة التحكم البنكية</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; display: flex; }
-        
-        /* القائمة الجانبية */
-        .sidebar { width: 250px; background-color: #1a1a1a; color: white; height: 100vh; padding: 20px; position: fixed; }
-        .sidebar h2 { color: #ff4b5c; text-align: center; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        .sidebar a { display: block; color: #bbb; padding: 15px; text-decoration: none; border-radius: 5px; transition: 0.3s; margin-bottom: 5px; }
-        .sidebar a:hover { background-color: #333; color: white; }
-        .sidebar a.active { background-color: #ff4b5c; color: white; }
-
-        /* المحتوى الرئيسي */
-        .main-content { margin-right: 270px; padding: 40px; width: 100%; }
-        .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        
-        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-top: 20px; border-top: 5px solid #ff4b5c; }
-        .balance { font-size: 32px; color: #2c3e50; font-weight: bold; margin: 10px 0; }
-        
-        /* تنبيه أمني - Session ID */
-        .security-info { background: #fff3cd; border: 1px dashed #856404; padding: 15px; border-radius: 8px; margin-top: 30px; color: #856404; }
-        .session-id { font-family: monospace; background: #eee; padding: 10px; display: block; word-break: break-all; margin-top: 10px; border-radius: 5px; border: 1px solid #ccc; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SeC Bank Dashboard</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
+<body class="dashboard-premium">
+<div class="dash-shell">
+    {% include 'partials/banking_sidebar.html' %}
 
-    <div class="sidebar">
-        <h2>HoneyGate Bank</h2>
-        <a href="/dashboard" class="active">الرئيسية</a>
-        <a href="/transfer">الحوالات 💸</a>
-        <a href="/cards">البطاقات 💳</a>
-        <a href="/loans">القروض 🏦</a>
-        <a href="/settings">الإعدادات ⚙️</a>
-        <br><br>
-        <a href="/logout" style="color: #ff4b5c; font-weight: bold;">تسجيل الخروج</a>
-    </div>
+    <main class="dash-main dashboard-fade">
+        <header class="dash-topbar">
+            <div class="dash-search-wrap">
+                <input class="dash-search" type="text" placeholder="Search transactions, cards, transfers">
+            </div>
+            <div class="dash-top-actions">
+                <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle theme">
+                    <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="12" r="4"></circle>
+                        <line x1="12" y1="2" x2="12" y2="5"></line>
+                        <line x1="12" y1="19" x2="12" y2="22"></line>
+                        <line x1="2" y1="12" x2="5" y2="12"></line>
+                        <line x1="19" y1="12" x2="22" y2="12"></line>
+                    </svg>
+                    <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path>
+                    </svg>
+                </button>
+                <div class="dash-user-pill">{{ display_name }} · {{ user }}</div>
+            </div>
+        </header>
 
-    <div class="main-content">
-        <div class="header">
-            <h1>أهلاً بك، {{ user }}</h1>
-            <div style="color: #7f8c8d;">آخر تسجيل دخول: {{ datetime }}</div>
-        </div>
+        <section class="dash-grid dash-grid-main">
+            <article class="dash-card dash-hero">
+                <p class="dash-label">Account Overview</p>
+                <h1 class="dash-balance">{{ balance_display }}</h1>
+                <p class="dash-muted">Available balance for daily banking operations</p>
+                <div class="dash-meta">Account: {{ account_number }} · Session {{ sid }} · Updated {{ datetime }}</div>
+            </article>
+        </section>
 
-        <div class="card">
-            <h3>إجمالي الرصيد المتاح</h3>
-            <div class="balance">12,750.00 ر.س</div>
-            <p style="color: #27ae60;">● الحساب نشط</p>
-        </div>
+        <section class="dash-grid dash-actions-grid">
+            <a class="dash-card dash-action-card" href="/transfer">
+                <span class="dash-action-icon"><svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg></span>
+                <h4>Transfer Money</h4>
+                <p>Move funds instantly</p>
+            </a>
+            <a class="dash-card dash-action-card" href="/cards">
+                <span class="dash-action-icon"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"></rect><path d="M2 10h20"></path></svg></span>
+                <h4>View Cards</h4>
+                <p>Manage card controls</p>
+            </a>
+            <a class="dash-card dash-action-card" href="/settings">
+                <span class="dash-action-icon"><svg viewBox="0 0 24 24"><path d="M12 2v20"></path><path d="M5 7h14"></path></svg></span>
+                <h4>Pay Bills</h4>
+                <p>Schedule utility payments</p>
+            </a>
+            <a class="dash-card dash-action-card" href="/loans">
+                <span class="dash-action-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M8 12h8"></path></svg></span>
+                <h4>Loan Request</h4>
+                <p>Apply for financing</p>
+            </a>
+        </section>
 
-        <div class="security-info">
-            <strong>⚠️ تنبيه أمني (لأغراض محاكاة الاختراق):</strong><br>
-            المتصفح يستخدم حالياً كود الجلسة (Session ID) الموضح أدناه للتعرف عليك. 
-            في حال وصول الهكر لهذا الكود، يمكنه استخدامه لـ **انتحال شخصيتك (Session Hijacking)**.
-            
-            <span class="session-id">
-                {{ sid }}
-            </span>
-            <p><small>* (هذا الكود هو ما سيقوم "الهكر" بنسخه ووضعه في المتصفح الثاني).*</small></p>
-        </div>
-    </div>
+        <section class="dash-grid dash-charts-grid">
+            <article class="dash-card">
+                <div class="dash-section-head"><h3>Balance Activity</h3></div>
+                <canvas id="balanceChart" height="140"></canvas>
+            </article>
+            <article class="dash-card">
+                <div class="dash-section-head"><h3>Transaction Activity</h3></div>
+                <canvas id="activityChart" height="140"></canvas>
+            </article>
+        </section>
 
+        <section class="dash-grid dash-grid-secondary">
+            <article class="dash-card">
+                <div class="dash-section-head"><h3>Recent Activity</h3></div>
+                <div id="activityFeed" class="dash-activity-list">
+                    {% for item in transactions[:6] %}
+                    <div class="dash-activity-item">
+                        <div>
+                            <p>{{ item.status }} · {{ item.email }}</p>
+                            <span>{{ item.timestamp }}</span>
+                        </div>
+                        <strong class="{% if item.amount and item.amount > 0 %}positive{% endif %}">{{ item.risk }}</strong>
+                    </div>
+                    {% endfor %}
+                </div>
+            </article>
+            <article class="dash-card">
+                <div class="dash-section-head"><h3>Account Services</h3></div>
+                <p class="dash-muted">All channels operational</p>
+                <div style="margin-top: 12px; display:flex; gap:8px;">
+                    <span class="badge badge-low">Verified</span>
+                    <span class="badge badge-accent">Online Banking</span>
+                </div>
+            </article>
+        </section>
+    </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+(function () {
+    const toggleBtn = document.getElementById("themeToggle");
+    const storageKey = "secbank-dashboard-theme";
+    let balanceChart = null;
+    let activityChart = null;
+
+    function applyTheme(theme) {
+        document.body.classList.toggle("dark", theme === "dark");
+    }
+    applyTheme(localStorage.getItem(storageKey) || "light");
+    toggleBtn.addEventListener("click", function () {
+        const next = document.body.classList.contains("dark") ? "light" : "dark";
+        localStorage.setItem(storageKey, next);
+        applyTheme(next);
+        renderCharts(window.__dashStats || null);
+    });
+
+    const fallbackStats = { labels: ["Mon","Tue","Wed","Thu","Fri","Sat"], counts: [3,5,4,7,6,8] };
+    const isAdmin = {{ "true" if is_admin else "false" }};
+    const dataUrl = isAdmin ? "/admin/stats" : "/bank/api/dashboard-data";
+    const liveUrl = isAdmin ? "/admin/live" : "/bank/api/dashboard-data";
+
+    function cssVar(name, backup) {
+        const v = getComputedStyle(document.body).getPropertyValue(name).trim();
+        return v || backup;
+    }
+
+    function renderCharts(stats) {
+        const data = stats && stats.labels && stats.labels.length ? stats : fallbackStats;
+        const textColor = cssVar("--dash-text", "#1e293b");
+        const mutedColor = cssVar("--dash-muted", "#64748b");
+        const borderColor = cssVar("--dash-border", "rgba(148,163,184,0.25)");
+        const primaryColor = cssVar("--dash-primary", "#8b5cf6");
+        const lineConfig = {
+            type: "line",
+            data: { labels: data.labels, datasets: [{ label: "Balance trend", data: data.counts.map((v,i)=>980000+i*4500+v*1500), borderColor: primaryColor, backgroundColor: "rgba(139,92,246,0.16)", fill: true, tension: 0.35 }] },
+            options: { plugins: { legend: { labels: { color: textColor } } }, scales: { x: { ticks: { color: mutedColor }, grid: { color: borderColor } }, y: { ticks: { color: mutedColor }, grid: { color: borderColor } } } }
+        };
+        const barConfig = {
+            type: "bar",
+            data: { labels: data.labels, datasets: [{ label: "Activity volume", data: data.counts, backgroundColor: "rgba(139,92,246,0.65)", borderRadius: 8 }] },
+            options: { plugins: { legend: { labels: { color: textColor } } }, scales: { x: { ticks: { color: mutedColor }, grid: { color: borderColor } }, y: { ticks: { color: mutedColor, precision: 0 }, grid: { color: borderColor }, beginAtZero: true } } }
+        };
+        if (balanceChart) balanceChart.destroy();
+        if (activityChart) activityChart.destroy();
+        balanceChart = new Chart(document.getElementById("balanceChart"), lineConfig);
+        activityChart = new Chart(document.getElementById("activityChart"), barConfig);
+    }
+
+    function renderFeed(items) {
+        const feed = document.getElementById("activityFeed");
+        if (!items || !items.length) return;
+        feed.innerHTML = items.slice(0, 6).map((item) => `
+            <div class="dash-activity-item">
+                <div><p>${item.status} · ${item.email}</p><span>${item.timestamp}</span></div>
+                <strong class="${(item.status || "").includes("INCOMING") ? "positive" : ""}">${item.risk || "LOW"}</strong>
+            </div>
+        `).join("");
+    }
+
+    async function initDashboardData() {
+        try {
+            const res = await fetch(dataUrl, { credentials: "same-origin" });
+            const data = await res.json();
+            if (data.labels) { window.__dashStats = data; renderCharts(data); }
+            if (data.items) renderFeed(data.items);
+            else if (isAdmin && data.counts) renderCharts(data);
+        } catch (e) {
+            renderCharts(fallbackStats);
+        }
+        if (isAdmin) {
+            try {
+                const live = await fetch(liveUrl, { credentials: "same-origin" });
+                const liveData = await live.json();
+                if (liveData.items) renderFeed(liveData.items);
+            } catch (e) {}
+        }
+    }
+    initDashboardData();
+})();
+</script>
 </body>
 </html>

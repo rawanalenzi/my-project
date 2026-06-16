@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SeC Bank Settings</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dashboard-premium">
+<div class="dash-shell">
+    {% include 'partials/banking_sidebar.html' %}
+    <main class="dash-main dashboard-fade">
+        <header class="dash-topbar">
+            <div>
+                <h2>Account Settings</h2>
+                <p class="dash-muted">Profile and notification preferences</p>
+            </div>
+            <div class="dash-user-pill">{{ user }}</div>
+        </header>
+        {% if settings_message %}
+        <div class="status-message" style="margin-bottom:16px">{{ settings_message }}</div>
+        {% endif %}
+        <section class="dash-grid dash-grid-main">
+            <article class="dash-card">
+                <h3 style="margin-bottom: 12px;">Profile</h3>
+                <form method="POST">
+                <div class="dash-form-grid">
+                    <div>
+                        <label class="dash-muted">Full Name</label>
+                        <input type="text" name="full_name" value="{{ display_name }}">
+                    </div>
+                    <div>
+                        <label class="dash-muted">Email</label>
+                        <input type="email" name="email" value="{{ user }}">
+                    </div>
+                    <div>
+                        <label class="dash-muted">Mobile Number</label>
+                        <input type="text" name="mobile" value="+966 5XX XXX XXXX">
+                    </div>
+                </div>
+                <div style="margin-top: 14px;"><button class="btn btn-primary" type="submit">Save Changes</button></div>
+                </form>
+            </article>
+            {% if is_decoy %}
+            <article class="dash-card">
+                <h3 style="margin-bottom: 8px;">Business Integrations</h3>
+                <p class="dash-muted">API and core banking interfaces for corporate clients.</p>
+                <a class="btn btn-secondary" href="/config" style="margin-top: 12px;">Open API Console</a>
+            </article>
+            {% endif %}
+        </section>
+    </main>
+</div>
+</body>
+</html>

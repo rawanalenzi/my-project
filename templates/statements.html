@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SeC Bank Statements</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dashboard-premium">
+<div class="dash-shell">
+    {% include 'partials/banking_sidebar.html' %}
+    <main class="dash-main dashboard-fade">
+        <header class="dash-topbar">
+            <div>
+                <h2>Account Statements</h2>
+                <p class="dash-muted">Download monthly statements for {{ account_number }}</p>
+            </div>
+            <div class="dash-user-pill">{{ display_name }}</div>
+        </header>
+        <section class="dash-card">
+            <div class="dash-activity-list">
+                {% for item in transactions %}
+                <div class="dash-activity-item">
+                    <div><p>{{ item.status }} — {{ item.email }}</p><span>{{ item.timestamp }}</span></div>
+                    <strong>{{ item.amount }} SAR</strong>
+                </div>
+                {% endfor %}
+            </div>
+            <div style="margin-top:16px">
+                <button class="btn btn-secondary" type="button">Download PDF (Last 30 days)</button>
+            </div>
+        </section>
+    </main>
+</div>
+</body>
+</html>

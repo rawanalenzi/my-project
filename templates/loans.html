@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SeC Bank Loans</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dashboard-premium">
+<div class="dash-shell">
+    {% include 'partials/banking_sidebar.html' %}
+    <main class="dash-main dashboard-fade">
+        <header class="dash-topbar">
+            <div>
+                <h2>Loans & Financing</h2>
+                <p class="dash-muted">Pre-approved up to {{ "{:,}".format(loan_preapproved) }} SAR</p>
+            </div>
+            <div class="dash-user-pill">{{ display_name }}</div>
+        </header>
+        {% if loan_message %}
+        <div class="status-message" style="margin-bottom:16px">{{ loan_message }}</div>
+        {% endif %}
+        <section class="dash-grid dash-grid-main">
+            <article class="dash-card">
+                <h3>Apply for a Loan</h3>
+                <form method="POST" class="dash-form-grid" style="margin-top:12px">
+                    <div>
+                        <label class="dash-muted">Product</label>
+                        <select name="product">
+                            <option>Personal Loan</option>
+                            <option>Auto Loan</option>
+                            <option>Home Finance</option>
+                            <option>Business Credit</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="dash-muted">Amount (SAR)</label>
+                        <input type="number" name="amount" placeholder="{{ loan_preapproved }}" required>
+                    </div>
+                    <div style="grid-column:1/-1">
+                        <label class="dash-muted">Purpose</label>
+                        <input type="text" name="purpose" placeholder="e.g. home renovation" required>
+                    </div>
+                    <div style="grid-column:1/-1;margin-top:8px">
+                        <button class="btn btn-primary" type="submit">Submit Application</button>
+                    </div>
+                </form>
+            </article>
+        </section>
+    </main>
+</div>
+</body>
+</html>

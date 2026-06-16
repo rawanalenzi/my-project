@@ -1,61 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>webpage Design</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    </head>
-    <body>
-<div class="main">
-    <div class="navbar">
-        <div class="icon">
-            <h2 class="logo">Bank</h2>
-        </div>
-        <div class="menu">
-            <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Services</a></li>
-                <li><a href="#">Design</a></li>
-                <li><a href="#">Contact</a></li>
-            </ul>
-        </div>
-        
-        <div class="search">
-            <input class="srch" type="search" name="" placeholder="type to text">
-            <a href="#"><button class="btn">Search</button></a>
-        </div>
-        </div>
-        <div class="content">
-            <h1>welcome to <br><span> our bank </span> </br></h1>
-            <p class="par">Your financial partner for a better future.</p>
-            <button class="cn"><a href="#">Join Now</a></button>
-            
-<div class="form">
-    <h2>Login Here</h2>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SeC Bank</title>
 
-    <form method="POST" action="{{ url_for('login') }}">
-        <input type="email" name="email" placeholder="Enter Email Here" required>
-        <input type="password" name="password" placeholder="Enter Password Here" required>
-        <button type="submit" class="btnn">Login</button>
-    </form>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
+</head>
 
-                <p class="link">Don't have an account? <a href="#">Sign Up</a></p>
-                <p class="liw">log in with</p>
+<body class="premium-login">
 
-                <div class="icon">
-                    <a href="#"><ion-icon name="logo-facebook"></ion-icon></a>
-                    <a href="#"><ion-icon name="logo-twitter"></ion-icon></a>
-                    <a href="#"><ion-icon name="logo-google"></ion-icon></a>
-                    <a href="#"><ion-icon name="logo-instagram"></ion-icon></a>
-                    <a href="#"><ion-icon name="logo-skype"></ion-icon></a>
+<div class="bg-waves"></div>
+
+<button class="theme-toggle" id="themeToggle">
+
+    <svg class="icon-sun" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+    </svg>
+
+    <svg class="icon-moon" viewBox="0 0 24 24">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3c0 .28 0 .57.05.85A7 7 0 0 0 
+20.15 12c.29 0 .57-.02.85-.06z"></path>
+    </svg>
+
+</button>
+
+<div class="premium-login-shell">
+
+    <div class="premium-brand">
+
+        <div class="premium-logo">⌁</div>
+
+        <h1>SeC Bank</h1>
+
+        <p>Secure. Trusted. Connected.</p>
+
+    </div>
+
+    <div class="premium-login-card">
+
+        <h2>Sign In</h2>
+
+        <form method="POST" action="/login">
+
+            <div class="form-row">
+                <input type="email" name="email" placeholder="Email 
+address" required>
             </div>
-        </div>
+
+            <div class="form-row">
+                <input type="password" name="password" 
+placeholder="Password" required>
+            </div>
+
+            <button class="btn btn-primary premium-btn" type="submit">
+                Sign In
+            </button>
+
+        </form>
+
     </div>
 
 </div>
-<script src="https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></script>
 
+<script>
 
-    </body>
+const themeToggle = document.getElementById("themeToggle");
+
+if(localStorage.getItem("theme") === "dark"){
+    document.body.classList.add("dark");
+}
+
+themeToggle.addEventListener("click", () => {
+
+    document.body.classList.toggle("dark");
+
+    if(document.body.classList.contains("dark")){
+        localStorage.setItem("theme", "dark");
+    } else {
+        localStorage.setItem("theme", "light");
+    }
+
+});
+
+</script>
+
+</body>
 </html>

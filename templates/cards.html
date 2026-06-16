@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SeC Bank Cards</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dashboard-premium">
+<div class="dash-shell">
+    {% include 'partials/banking_sidebar.html' %}
+    <main class="dash-main dashboard-fade">
+        <header class="dash-topbar">
+            <div>
+                <h2>Your Cards</h2>
+                <p class="dash-muted">Manage your payment cards</p>
+            </div>
+            <div class="dash-user-pill">{{ display_name }}</div>
+        </header>
+        <section class="dash-actions-grid">
+            <article class="dash-card dash-fake-bank-card">
+                <p class="dash-muted">SeC Bank Platinum</p>
+                <h3>{{ card_mask }}</h3>
+                <div class="dash-meta">Valid 08/28 · Primary card</div>
+            </article>
+            {% for card in secondary_cards %}
+            <article class="dash-card dash-fake-bank-card">
+                <p class="dash-muted">SeC Bank Card</p>
+                <h3>{{ card }}</h3>
+                <div class="dash-meta">Active · Contactless enabled</div>
+            </article>
+            {% endfor %}
+        </section>
+        <section class="dash-grid dash-grid-secondary">
+            <article class="dash-card">
+                <h3 style="margin-bottom: 12px;">Card Controls</h3>
+                <div class="dash-action-stack">
+                    <form method="POST" action="/cards/action"><input type="hidden" name="action" value="freeze"><button class="btn btn-secondary" type="submit">Freeze Card</button></form>
+                    <form method="POST" action="/cards/action"><input type="hidden" name="action" value="limit"><button class="btn btn-secondary" type="submit">Set Spending Limit</button></form>
+                    <form method="POST" action="/cards/action"><input type="hidden" name="action" value="replace"><button class="btn btn-primary" type="submit">Request Replacement</button></form>
+                </div>
+            </article>
+            <article class="dash-card">
+                <h3 style="margin-bottom: 12px;">Latest Card Activity</h3>
+                <div class="dash-activity-list">
+                    {% for item in transactions[:3] %}
+                    <div class="dash-activity-item">
+                        <div><p>{{ item.email }}</p><span>{{ item.timestamp }}</span></div>
+                        <strong>{{ item.amount }} SAR</strong>
+                    </div>
+                    {% endfor %}
+                </div>
+            </article>
+        </section>
+    </main>
+</div>
+</body>
+</html>

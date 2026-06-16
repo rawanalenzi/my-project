@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SeC Bank Internal Administration</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dashboard-premium">
+<div class="dash-shell">
+    <aside class="dash-sidebar">
+        <div class="dash-brand">
+            <span class="dash-brand-dot"></span>
+            <h2>SeC Bank</h2>
+        </div>
+        <nav class="dash-nav">
+            <a class="dash-nav-link" href="/dashboard">Back to Portal</a>
+            <a class="dash-nav-link active" href="/secure-admin">Internal Admin</a>
+            <a class="dash-nav-link" href="/config">System Console</a>
+        </nav>
+    </aside>
+    <main class="dash-main dashboard-fade">
+        <header class="dash-topbar">
+            <div>
+                <h2>Internal Administration</h2>
+                <p class="dash-muted">Restricted operations panel</p>
+            </div>
+        </header>
+        <section class="dash-grid dash-grid-main">
+            <article class="dash-card">
+                <h3>Core Banking Controls</h3>
+                <p class="dash-muted">Manage settlement queues and audit exports.</p>
+                <div class="dash-action-stack" style="margin-top:16px">
+                    <a class="btn btn-primary" href="/config">Open System Console</a>
+                    <a class="btn btn-secondary" href="/admin/config_backup">Download Config Backup</a>
+                </div>
+            </article>
+        </section>
+    </main>
+</div>
+</body>
+</html>
